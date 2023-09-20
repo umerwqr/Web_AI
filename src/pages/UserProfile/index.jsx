@@ -1,35 +1,50 @@
-import React ,{useState, useEffect}from "react";
-import Wrapper from "../shared/Wrapper";
+import React, { useState, useEffect } from "react";
+import Wrapper from "../../components/shared/Wrapper";
 import Image from "next/image";
 import { BsBookmarkHeart, BsBookmarkStar } from "react-icons/bs";
 import { useRouter } from "next/navigation";
 import { BiSolidLock } from "react-icons/bi";
-import {db} from "@/config/firebase"
+import { db } from "@/config/firebase"
 import { collection, getDocs } from 'firebase/firestore';
+import cookie from "js-cookie"
 
-
-const TopAiTools = () => {
+const index = () => {
     const router = useRouter();
-    const[ tools,setTool]=useState(null)
+    const [tools, setTool] = useState(null)
+    console.log("tools", tools)
 
-    
+    var userCookie = cookie.get('user');
+    const [userObject, setUserObject] = useState(null)
     useEffect(() => {
-      const fetchUsers = async () => {
-        console.log("helloo")
-        try {
-          const querySnapshot = await getDocs(collection(db, "tools"));
-          const toolList = querySnapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-          }));
-          setTool(toolList);
-        } catch (error) {
-          console.error('Error fetching users:', error, " error end");
+        if (userCookie) {
+            setUserObject(JSON.parse(userCookie))
+
         }
-      };
-      fetchUsers();
+    }, [userCookie]);
+
+    console.log("objeeeect:", userObject?.email)
+    useEffect(() => {
+        const fetchUsers = async () => {
+
+            console.log("helloo")
+            try {
+                const querySnapshot = await getDocs(collection(db, "tools"));
+                const toolList = querySnapshot.docs.map((doc) => ({
+                    id: doc.id,
+                    ...doc.data(),
+                }));
+                const filteredTools = toolList.filter(tool => tool.email === JSON.parse(userCookie).email);
+
+                console.log("match with")
+                console.log(filteredTools)
+                setTool(filteredTools);
+            } catch (error) {
+                console.error('Error fetching users:', error, " error end");
+            }
+        };
+        fetchUsers();
     }, []);
-  
+
     const data = [
         {
             id: 1,
@@ -143,22 +158,33 @@ const TopAiTools = () => {
         },
     ];
 
-    const dateCorrector=(seconds)=>{
+    const dateCorrector = (seconds) => {
         let sec = seconds * 1000; // Convert to milliseconds
         let normalDate = new Date(sec).toLocaleDateString('en-GB', { timeZone: 'UTC' });
         return normalDate
     }
     return (
         <div className="relative pb-20">
+            <div className=" ml-44 mt-4 mb-28">
+
+
+                <h1>Name : {userObject?.displayName}</h1>
+                <h1>Email : {userObject?.email}</h1>
+            </div>
+            <div className=" m-20 flex justify-center items-center font-bold text-xxl">
+                <h1>
+                    Following are tools which you posted.
+                </h1>
+            </div>
             <div className="">
                 <div className="absolute bg-white/10 w-[338px] h-[338px] rounded-full blur-3xl"></div>
             </div>
             <Wrapper>
                 <div className="flex flex-col justify-center items-center">
-                   
+
                     {/* card  */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8 ">
-                        {tools&&tools.map((item, index) => {
+                        {tools && tools.map((item, index) => {
                             if (item.id === 3) {
                                 return (
                                     <div
@@ -171,10 +197,10 @@ const TopAiTools = () => {
                                                 {item.tools.map((tool, toolIndex) => (
                                                     <div key={toolIndex} className="grid grid-cols-3 justify-start text-left  py-[10px] px-5">
                                                         <div>
-                                                        <p>{dateCorrector(tool.joiningDate.seconds)}</p>
+                                                            <p>{dateCorrector(tool.joiningDate.seconds)}</p>
                                                         </div>
                                                         <div>
-                                                        <p className="z-[5] absolute hover:text-primary-blue dark:hover:text-primary-blue transition-all ease-linear duration-200">{tool.tool}</p>
+                                                            <p className="z-[5] absolute hover:text-primary-blue dark:hover:text-primary-blue transition-all ease-linear duration-200">{tool.tool}</p>
                                                         </div>
                                                         <div className="flex gap-3 items-center pl-12 md:pl-14">
                                                             <BsBookmarkStar size={22} />
@@ -189,7 +215,7 @@ const TopAiTools = () => {
                             } else {
                                 return (
                                     <div
-                                        onClick={() => router.push({ pathname: `discover-dynamic`, query: { subject: JSON.stringify(item&&item)} })}
+                                        onClick={() => router.push({ pathname: `discover-dynamic`, query: { subject: JSON.stringify(item && item) } })}
                                         key={index}
                                         className="z-[2] cursor-pointer w-[330px] md:w-[350px] bg-gradient-to-br from-[#27B6D7] via-[#07174F54] to-[#27B6D7] bg-opacity-50 rounded-md mx-auto p-[1px]  "
                                     >
@@ -312,4 +338,4 @@ const TopAiTools = () => {
     );
 };
 
-export default TopAiTools;
+export default index;

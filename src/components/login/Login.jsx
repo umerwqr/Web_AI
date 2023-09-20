@@ -2,6 +2,7 @@ import Link from 'next/link'
 import React, { useState ,useContext} from 'react'
 import { useRouter } from "next/navigation";
 import { message } from 'antd';
+import cookie from "js-cookie"
 import { auth } from '@/config/firebase/';
 import { signInWithEmailAndPassword } from "firebase/auth"
 import AppContext from '../appContext';
@@ -36,6 +37,9 @@ const Login = () => {
                 const user = userCredential.user;
                 console.log("usererer",user)
                 context.setUserObject(user)
+
+                cookie.set("user",JSON.stringify(user))
+                    
                 message.success('User Logged in successfully');
                 setTimeout(() => {
                     router.push('/');

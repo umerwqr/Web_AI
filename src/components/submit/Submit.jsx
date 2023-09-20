@@ -1,13 +1,16 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { db } from '@/config/firebase';
 import { message } from 'antd';
 import { set } from 'firebase/database';
 import { auth } from '@/config/firebase';
+import cookie from "js-cookie"
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { addDoc, collection } from 'firebase/firestore';
 import AppContext from '../appContext';
 import { storage } from '@/config/firebase';
 import { getStorage } from "firebase/storage";
+
+
 
 import { serverTimestamp } from 'firebase/firestore'; // Added this import
 
@@ -20,29 +23,28 @@ const Submit = () => {
   const [image, setImage] = useState('');
   const [previewImage, setPreviewImage] = useState(null); // Added state for preview
   const[user,setUser]=useState({})
+  const [userObject, setUserObject] = useState(null)
+  const [ email,setEmail]=useState('')
+console.log("email:",userObject?.email ,);
+
   const [toolData, setToolData] = useState({
     title: "",
     detail: "",
     link: "",
     category: "",
-    email: "",
+    email:"",
     
   });
+  console.log(toolData)
+  var userCookie = cookie.get('user');
+
   useEffect(() => {
-    if (storedUserData) {
-      const userData = JSON.parse(storedUserData);
-      setUser(userData);
-    }
-  }, []);
-  console.log(user&&user)
-  const handleImageUpload = async (e) => {
-    if (image == null)
-      return;
+    if (userCookie) {
+      setUserObject(JSON.parse(userCookie))
 
+    } 
+  }, [userCookie]);
 
-   
-
-  };
   const handleImagePreview = (e) => {
 
     const file = e.target.files[0];
@@ -57,6 +59,10 @@ const Submit = () => {
     }
   };
   const handleSubmitTool = async () => {
+    if((toolData.title && toolData.detail && toolData.category && toolData.link  && image) ===""){
+      message.error("Error, Feiled or Feilds are empty")
+      return;
+    }
 
     try{
       const imageRef = ref(storage, `/images/ ${image.name}`)
@@ -67,9 +73,10 @@ const Submit = () => {
         detail: toolData.detail,
         link: toolData.link,
         category: toolData.category,
-        email: toolData.email,
+        email: userObject?.email,
         title: toolData.title,
         imageUrl:imageUrl,
+        user:userObject?.displayName,
         joiningDate: serverTimestamp(),
       })
       message.success('Tool successfully Registered');
@@ -116,9 +123,9 @@ const Submit = () => {
             placeholder='Tool Category' type="text" className='dark:placeholder-white focus:outline-none text-[13px] md:text-[16px] pl-3 md:pl-5 w-full md:py-5 py-3 bg-custom-blue border rounded-md dark:border-primary-border border-primary-dark' />
 
           <input
-            value={toolData.email}
-            onChange={(e) => setToolData({ ...toolData, email: e.target.value })}
-            placeholder='Your Email Address' type="email" className='dark:placeholder-white focus:outline-none text-[13px] md:text-[16px] pl-3 md:pl-5 w-full md:py-5 py-3  bg-custom-blue border rounded-md dark:border-primary-border border-primary-dark' />
+          disabled
+            value={userObject?.email}
+            placeholder='Your Email Address' type="email" className='dark:placeholder-white  text-gray-600 focus:outline-none text-[13px] md:text-[16px] pl-3 md:pl-5 w-full md:py-5 py-3  bg-custom-blue border rounded-md dark:border-primary-border border-primary-dark' />
           {previewImage && <img src={previewImage} alt="Preview" className="my-4 max-w-[200px]" />}
 
           <div className='my-6 flex flex-col justify-center items-center'>

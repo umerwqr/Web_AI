@@ -5,7 +5,7 @@ import { ThemeProvider } from "next-themes";
 import { Space_Grotesk } from "next/font/google";
 import AppContext from "@/components/appContext";
 import { useState } from "react";
-
+import cookie from "js-cookie"
 
 const font = Space_Grotesk({ subsets: ["latin"] });
 

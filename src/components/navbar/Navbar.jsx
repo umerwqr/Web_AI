@@ -8,6 +8,8 @@ import { CgMenuRightAlt } from "react-icons/cg";
 import { BsMoon, BsSun } from "react-icons/bs";
 import { useState, useEffect } from "react";
 import { useTheme } from "next-themes";
+import Cookies from 'js-cookie';
+import { Dropdown,Menu } from "antd";
 import Link from "next/link";
 const Navbar = () => {
   const router = useRouter();
@@ -18,10 +20,31 @@ const Navbar = () => {
   const { systemTheme, theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
+  const [userObject, setUserObject] = useState(null)
+  var userCookie = Cookies.get('user');
+
   useEffect(() => {
     setMounted(true);
-  }, []);
+    if (userCookie) {
+      setUserObject(JSON.parse(userCookie))
 
+    } 
+  }, [userCookie]);
+
+  const LogOut = () => {
+
+    Cookies.remove("user")
+    setUserObject(null)
+    router.push("/")
+    
+  }
+  const profileMenu = (
+    <Menu>
+      <Menu.Item key="User"><Link href="/UserProfile">Profile</Link></Menu.Item>
+      <Menu.Item key="logout" className="menu" onClick={LogOut}>Logout</Menu.Item>
+    </Menu>
+  );
+  
   if (!mounted) return null;
   const currentTheme = theme === "system" ? systemTheme : theme;
 
@@ -75,14 +98,27 @@ const Navbar = () => {
               )}
             </div>
             {/* sign in */}
-            <div className="flex  items-center space-x-2 pl-2  rounded-md">
-              <button onClick={() => router.push("/login")} className="font-[500] text-[18px] w-[124px] h-[50px] z-20 text-primary-blue  dark:text-white border border-[#15CADF] bg-transparent rounded-md">
-                Sign in
-              </button>
-            </div>
-           
+            {
+              userObject&&userObject ? 
+              (<Dropdown overlay={profileMenu} placement="bottomRight" arrow>
+              
+              <div className="py-3 rounded-full cursor-pointer ml-1 flex flex-col justify-center items-center h-18  ">
+                
+                {/* <Image className="rounded-full" src={userObject.imageUrl} width={40} height={40} alt="userImage" /> */}
+                <span className='p-0 m-0 h-[20px]' style={{display:"flex"}}>{userObject.displayName}</span>
+              </div>
+                </Dropdown>) : 
+
+              <div className="flex  items-center space-x-2 pl-2  rounded-md">
+                <button onClick={() => router.push("/login")} className="font-[500] text-[18px] w-[124px] h-[50px] z-20 text-primary-blue  dark:text-white border border-[#15CADF] bg-transparent rounded-md">
+                  Sign in
+                </button>
+              </div>
+            }
+
+
             {/* start a project  */}
-            <button onClick={()=> router.push("/submit-tool")} className="font-[500] text-[18px] z-20  w-[180px] h-[50px] text-white dark:text-white rounded-md  bg-gradient-to-r from-blue-400 via-green-500 to-blue-500">
+            <button onClick={() => router.push("/submit-tool")} className="font-[500] text-[18px] z-20  w-[180px] h-[50px] text-white dark:text-white rounded-md  bg-gradient-to-r from-blue-400 via-green-500 to-blue-500">
               Submit a tool
             </button>
           </div>
@@ -148,7 +184,7 @@ const Navbar = () => {
                       Latest News
                     </li>
                   </Link>
-                  
+
                 </ul>
                 <div className="flex flex-col gap-y-6 mt-5">
                   {/* sign in */}

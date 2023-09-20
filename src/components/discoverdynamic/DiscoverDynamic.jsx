@@ -1,3 +1,4 @@
+
 import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
@@ -12,11 +13,9 @@ import {
 } from "react-icons/bs";
 import Tabs from "./Tabs";
 
-const DiscoverDynamic = () => {
+const DiscoverDynamic = ({object}) => {
   const router = useRouter();
-  const {subject} = router.query;
-  const tool = useState(subject ? JSON.parse(subject) : null)
-console.log( tool[0].title)
+ 
 
 const dateCorrector=(seconds)=>{
   let sec = seconds * 1000; // Convert to milliseconds
@@ -80,7 +79,7 @@ const dateCorrector=(seconds)=>{
       <div className="flex md:flex-row flex-col justify-center  gap-8">
         <div className="flex basis-[100%] md:basis-[50%]">
           <Image
-            src={tool[0].imageUrl}
+            src={object[0]&&object[0].imageUrl}
             alt=""
             width={1080}
             height={1080}
@@ -91,7 +90,7 @@ const dateCorrector=(seconds)=>{
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-[24px] md:text-[40px] font-[700] tracking-wide">
-                {tool[0].title}
+                {object[0]&&object[0].title}
               </h1>
             </div>
             <div className="flex gap-5 md:gap-10 items-center relative">
@@ -109,7 +108,7 @@ const dateCorrector=(seconds)=>{
           </div>
           <div className="flex items-center gap-5">
             <BsFillCalendarFill size={20} className="text-slate-400" />
-            <p className="text-[16px] font-[400]">{dateCorrector(tool[0].joiningDate.seconds)}</p>
+            <p className="text-[16px] font-[400]">{dateCorrector(object[0]&&object[0].joiningDate.seconds)}</p>
           </div>
           <div className="flex gap-3">
             <div className='flex  py-2 gap-2'>
@@ -128,7 +127,7 @@ const dateCorrector=(seconds)=>{
           </div>
           <div className="py-5">
             <p className="text-[18px] font-[500]">
-             {tool[0].detail}
+             {object[0]&&object[0].detail}
             </p>
           </div>
           <div className=" md:max-w-[120px] bg-gradient-to-br from-[#27B6D7] via-[#07174F54] to-[#27B6D7] bg-opacity-50 rounded-md p-[1px] ">
@@ -368,4 +367,4 @@ const dateCorrector=(seconds)=>{
   );
 };
 
-export default DiscoverDynamic;
+export  {DiscoverDynamic};
