@@ -8,14 +8,21 @@ import { message } from "antd"
 import { doc, setDoc } from "firebase/firestore";
 import { serverTimestamp } from 'firebase/firestore'; // Added this import
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
+
 const Register = () => {
     const router = useRouter()
     const [newUser, setNewUser] = useState({ email: '', password: '', username: '' });
+    const [showPassword, setShowPassword] = useState(false);
+
     const validateEmail = (email) => {
         // Regular expression to validate email format
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
     }
+    const togglePasswordVisibility = () => {
+        setShowPassword(!showPassword);
+    };
     const containsEmail = (name) => {
         // Regular expression to check if the name contains an email address
         const emailRegex = /[^\s@]+@[^\s@]+\.[^\s@]+/;
@@ -43,13 +50,13 @@ const Register = () => {
                 })
                 // db.collection('users').doc(userCredential.user.uid).set(userCredential.user);
                 await setDoc(doc(db, "users", userCredential.user.uid), {
-                    name: newUser.username ,
-                    email:newUser.email,
+                    name: newUser.username,
+                    email: newUser.email,
                     password: newUser.password,
-                    joiningDate:  serverTimestamp(),
-                    mode:"premium"
-                    
-                  });
+                    joiningDate: serverTimestamp(),
+                    mode: "premium"
+
+                });
 
                 message.success('User Registered successfully');
                 setTimeout(() => {
@@ -88,14 +95,22 @@ const Register = () => {
                         className='dark:placeholder-[#FFFFFF]  focus:outline-none text-[13px] md:text-[16px] pl-3 
                         md:pl-5 w-full py-3 md:py-5  bg-custom-blue border rounded-md dark:border-primary-border
                          border-primary-dark' />
-                    <input placeholder='Enter Password'
-                        type="password"
-                        value={newUser.password}
-                        onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
-                        className='dark:placeholder-[#FFFFFF] text-[13px] md:text-[16px] pl-3 md:pl-5 focus:outline-none
-                         w-full py-3 md:py-5  bg-custom-blue border rounded-md dark:border-primary-border
-                         border-primary-dark' />
-
+                    <div className="relative">
+                        <input
+                            placeholder="Enter Password"
+                            type={showPassword ? "text" : "password"}
+                            value={newUser.password}
+                            onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+                            className="dark:placeholder-[#FFFFFF] text-[13px] md:text-[16px] pl-3 md:pl-5 focus:outline-none
+                                         w-full py-3 md:py-5 bg-custom-blue border rounded-md dark:border-primary-border
+                                       border-primary-dark"  />
+                        <span
+                            onClick={togglePasswordVisibility}
+                            className="absolute right-4 top-4 cursor-pointer"
+                        >
+                            {showPassword ? <EyeInvisibleOutlined /> : <EyeOutlined />}
+                        </span>
+                    </div>
                     <div className='my-0'>
                         <Link href={'#'}>
                             <button

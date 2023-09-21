@@ -1,8 +1,33 @@
 import Image from 'next/image'
-import React from 'react'
+import React,{useState, useEffect} from 'react'
 import { BsBookmarkStar } from 'react-icons/bs'
+import {db} from "@/config/firebase"
+import { collection, getDocs } from 'firebase/firestore';
+import { useRouter } from "next/navigation";
+
 
 const News = () => {
+    const router =useRouter();
+    const[ news,setNews]=useState(null)
+
+    
+    useEffect(() => {
+      const fetchUsers = async () => {
+        console.log("helloo")
+        try {
+          const querySnapshot = await getDocs(collection(db, "news"));
+          const toolList = querySnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+          setNews(toolList);
+        } catch (error) {
+            console.log(error)
+        }
+      };
+      fetchUsers();
+    }, []);
+  console.log("news",news)
     const data = [
         {
             id: 1,
@@ -53,11 +78,16 @@ const News = () => {
             posted: '4 days ago'
         },
     ]
+    const dateCorrector=(seconds)=>{
+        let sec = seconds * 1000; // Convert to milliseconds
+        let normalDate = new Date(sec).toLocaleDateString('en-GB', { timeZone: 'UTC' });
+        return normalDate
+    }
     return (
         <div className="mt-16 mb-14 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 xl:grid-cols-3 gap-10">
             <div className='absolute top-[50rem] left-0 bg-[#2CD7834F]/10 w-[300px] md:w-[400px] h-[338px] rounded-full blur-3xl'></div>
 
-            {data.map((item, index) => (
+            {news&&news.map((item, index) => (
                 <div
                     key={index}
                     className="w-[330px] md:w-[393px] rounded-md mx-auto border-[2px] border-primary-border"
@@ -66,7 +96,7 @@ const News = () => {
                         <div className="flex flex-col mx-3 my-3">
                             <div className="">
                                 <Image
-                                    src={item.src}
+                                    src={item.imageUrl}
                                     alt=""
                                     width={1080}
                                     height={1080}
@@ -76,7 +106,7 @@ const News = () => {
                                     <div className='flex mt-5  items-center '>
                                         <div className=' bg-gradient-to-br from-[#27B6D7] via-[#07174F54] to-[#27B6D7] bg-opacity-50 rounded-md p-[0.9px] '>
                                             <button className='dark:bg-primary-dark  w-[155px] bg-white flex justify-center items-center gap-3 h-[40px]   rounded-md'>
-                                                <Image src={item.catIcon} width={300} height={300} className='w-[18px]' />
+                                                {/* <Image src={item.catIcon} width={300} height={300} className='w-[18px]' /> */}
                                                 {item.category}
                                             </button>
                                         </div>
@@ -88,13 +118,13 @@ const News = () => {
                                         </div>
 
                                     </div>
-                                    <p className='text-[24px] font-[600] text-left'>{item.title}</p>
+                                    <p className='text-[24px] font-[600] text-left'>{item.discription}</p>
                                     <button className='font-[500] text-[18px] w-[180px]  h-[50px] text-white dark:text-white rounded-md  bg-gradient-to-r from-blue-400 via-green-500 to-blue-500'>
                                         Visit Website
                                     </button>
                                     <div className='border-t border-primary-border w-full'>
                                         <p className='text-left text-slate-400 font-[400] text-[16px] pt-4 pb-3'>
-                                            Posted: {item.posted}
+                                            Posted: {dateCorrector(item.joiningDate.seconds)}
                                         </p>
 
                                     </div>

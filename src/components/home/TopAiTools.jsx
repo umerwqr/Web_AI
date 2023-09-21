@@ -1,17 +1,18 @@
-import React ,{useState, useEffect}from "react";
+import React, { useState, useEffect } from "react";
 import Wrapper from "../shared/Wrapper";
 import Image from "next/image";
 import { BsBookmarkHeart, BsBookmarkStar } from "react-icons/bs";
 import { useRouter } from "next/navigation";
 import { BiSolidLock } from "react-icons/bi";
-import {db} from "@/config/firebase"
+import { db } from "@/config/firebase";
 import { collection, getDocs } from 'firebase/firestore';
+const TopAiTools = ({ searchTerm }) => {
 
-
-const TopAiTools = () => {
     const router = useRouter();
     const[ tools,setTool]=useState(null)
+    const filteredTools = tools && tools.filter(item => item.title.toLowerCase().includes(searchTerm.toLowerCase()));
 
+  
     
     useEffect(() => {
       const fetchUsers = async () => {
@@ -158,7 +159,7 @@ const TopAiTools = () => {
                    
                     {/* card  */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8 ">
-                        {tools&&tools.map((item, index) => {
+                        {filteredTools&&filteredTools.map((item, index) => {
                             if (item.id === 3) {
                                 return (
                                     <div

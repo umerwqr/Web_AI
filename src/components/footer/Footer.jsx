@@ -8,12 +8,12 @@ const Footer = () => {
         <div className=" dark:bg-gradient-to-r from-[#112B59] to-[#07174F]">
             <Wrapper>
                 <div className=" flex-col md:justify-center items-center pl-5 md:px-10 pt-14 pb-7 ">
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 ">
                         <div>
                             <Link href={'/'}>
                                 <Image src={'/images/ai.png'} alt="" width={500} height={500} className="w-[180px]" />
                             </Link>
-                            <p className="text-[16px] font-[400] md:w-[300px] mt-4">
+                            <p className="text-[16px] font-[400] md-[300px] xl:w-[300px] mt-4">
                                 Said ut perspiciatis unde omnis iste natus error sit voluptatem
                                 accusantium doloremque laudantium, totam rem aperiam, eaque ipsa
                                 quae ab illo inventore veritatis et quasi architecto beatae

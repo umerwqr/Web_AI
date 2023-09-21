@@ -165,15 +165,17 @@ const index = () => {
     }
     return (
         <div className="relative pb-20">
-            <div className=" ml-44 mt-4 mb-28">
+            <div className=" lg:ml-44 ml-4 mr-2 mt-4 
+            mb-12 border lg:w-[40%] lg:pl-12 pl-4 pt-4 lg:pt-7 
+            h-28 md:h-48 text-2xl rounded-md border-s-blue-300">
 
 
-                <h1>Name : {userObject?.displayName}</h1>
-                <h1>Email : {userObject?.email}</h1>
+                <h1><span className="text-teal-500">Name : </span>{userObject?.displayName}</h1>
+                <h1><span className="text-teal-500">Email : </span>{userObject?.email}</h1>
             </div>
-            <div className=" m-20 flex justify-center items-center font-bold text-xxl">
+            <div className=" md:m-20 m-6 flex justify-center items-center font-bold text-2xl md:text-3xl text-teal-500">
                 <h1>
-                    Following are tools which you posted.
+                    Following are the tools which you have posted.
                 </h1>
             </div>
             <div className="">

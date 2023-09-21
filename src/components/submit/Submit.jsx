@@ -69,6 +69,7 @@ console.log("email:",userObject?.email ,);
 
       await uploadBytes(imageRef, image);
       const imageUrl = await getDownloadURL(imageRef);
+      console.log(imageUrl)
       addDoc(collection(db, 'tools'), {
         detail: toolData.detail,
         link: toolData.link,

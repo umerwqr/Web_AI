@@ -100,12 +100,16 @@ const Navbar = () => {
             {/* sign in */}
             {
               userObject&&userObject ? 
-              (<Dropdown overlay={profileMenu} placement="bottomRight" arrow>
+              (<Dropdown overlay={profileMenu}  placement="bottomRight" arrow>
               
-              <div className="py-3 rounded-full cursor-pointer ml-1 flex flex-col justify-center items-center h-18  ">
+              <div className="py-3 rounded-full cursor-pointer  flex flex-col justify-center items-center    ">
                 
                 {/* <Image className="rounded-full" src={userObject.imageUrl} width={40} height={40} alt="userImage" /> */}
-                <span className='p-0 m-0 h-[20px]' style={{display:"flex"}}>{userObject.displayName}</span>
+                <span className='p-0 m-0  ' style={{display:"flex"}}>
+                  <div 
+                  className="border-teal-500 border transition duration-300  pl-4 pr-4 pt-3 hover:bg-teal-100 rounded-md h-12">
+                    {userObject.displayName}
+                  </div></span>
               </div>
                 </Dropdown>) : 
 

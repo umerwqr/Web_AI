@@ -1,16 +1,23 @@
 import Link from 'next/link'
-import React, { useState ,useContext} from 'react'
+import React, { useState, useContext } from 'react'
 import { useRouter } from "next/navigation";
 import { message } from 'antd';
 import cookie from "js-cookie"
 import { auth } from '@/config/firebase/';
 import { signInWithEmailAndPassword } from "firebase/auth"
 import AppContext from '../appContext';
+import { EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
+
 const Login = () => {
-    const context =useContext(AppContext)
+    const context = useContext(AppContext)
     const router = useRouter()
     const [newUser, setNewUser] = useState({ email: '', password: '' });
+    const [showPassword, setShowPassword] = useState(false);
 
+
+    const togglePasswordVisibility = () => {
+        setShowPassword(!showPassword);
+    };
     const validateEmail = (email) => {
         // Regular expression to validate email format
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -35,11 +42,11 @@ const Login = () => {
             else {
                 const userCredential = await signInWithEmailAndPassword(auth, newUser.email, newUser.password);
                 const user = userCredential.user;
-                console.log("usererer",user)
+                console.log("usererer", user)
                 context.setUserObject(user)
 
-                cookie.set("user",JSON.stringify(user))
-                    
+                cookie.set("user", JSON.stringify(user))
+
                 message.success('User Logged in successfully');
                 setTimeout(() => {
                     router.push('/');
@@ -69,15 +76,23 @@ const Login = () => {
                         className='dark:placeholder-[#FFFFFF]  focus:outline-none text-[13px] md:text-[16px] pl-3 
                         md:pl-5 w-full py-3 md:py-5  bg-custom-blue border rounded-md dark:border-primary-border
                          border-primary-dark' />
-                    <input placeholder='Enter Password'
-                        type="password"
-                        value={newUser.password}
-                        onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
-                        className='dark:placeholder-[#FFFFFF] text-[13px] md:text-[16px] pl-3 md:pl-5 focus:outline-none
-                         w-full py-3 md:py-5  bg-custom-blue border rounded-md dark:border-primary-border
-                         border-primary-dark' />
-
-
+                    <div className="relative">
+                        <input
+                            placeholder="Enter Password"
+                            type={showPassword ? "text" : "password"}
+                            value={newUser.password}
+                            onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+                            className="dark:placeholder-[#FFFFFF] text-[13px] md:text-[16px] pl-3 md:pl-5 focus:outline-none
+                                        w-full py-3 md:py-5 bg-custom-blue border rounded-md dark:border-primary-border
+                                    border-primary-dark"
+                        />
+                        <span
+                            onClick={togglePasswordVisibility}
+                            className="absolute right-4 top-4 cursor-pointer"
+                        >
+                            {showPassword ? <EyeInvisibleOutlined /> : <EyeOutlined />}
+                        </span>
+                    </div>
                     <div className='my-0'>
                         <Link href={'/'}>
                             <button
@@ -90,11 +105,11 @@ const Login = () => {
                         </Link>
                     </div>
                     <div className='my-1' style={{ marginBottom: "40px" }}>
-                    <p className="mb-6 text-red-600">If not Registered?</p>
+                        <p className="mb-6 text-red-600">If not Registered?</p>
 
                         <Link href={'/Register'}>
                             <button
-                                onClick={() => router.push("/register")}
+                                onClick={() => router.push("/Register")}
                                 className='font-[500] md:text-[18px] w-[130px] h-[40px] md:h-[50px] text-white dark:text-white 
                             rounded-md  bg-gradient-to-r from-blue-400 via-green-500 to-blue-500'>
                                 Register

@@ -6,9 +6,19 @@ import { AiOutlineSearch } from 'react-icons/ai'
 import { RiToolsFill } from 'react-icons/ri'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-const Hero = () => {
+const Hero = ({ onSearch }) => {
     const [isDropdownOpen, setDropdownOpen] = useState(false);
     const [selected, setSelected] = useState(null);
+    const [searchTerm, setSearchTerm] = useState('');
+
+    const handleSearchChange = (e) => {
+        setSearchTerm(e.target.value);
+    };
+
+    const handleSearch = () => {
+        onSearch(searchTerm);
+    };
+
     const handleButtonClick = (index) => {
         setSelected(index);
     };
@@ -38,7 +48,7 @@ const Hero = () => {
                         <div className='mt-10 flex flex-col justify-center items-center'>
                             <div className='flex gap-3 md:gap-14 justify-center items-center'>
                                 <Link href={''} className='flex items-center gap-3'>
-                                  <RiToolsFill size={22} className="dark:text-white text-black"/>
+                                    <RiToolsFill size={22} className="dark:text-white text-black" />
                                     <p className='text-sm md:text-base'>
                                         Tools added today
                                     </p>
@@ -66,11 +76,15 @@ const Hero = () => {
                                             className="block focus:outline-none md:text-[16px] text-[12px] w-full pl-14 pr-3 h-[50px] rounded-md border-none  bg-opacity-5 bg-transparent focus:ring-0 focus:border-indigo-500  focus:ring-opacity-0"
                                             type="text"
                                             placeholder="Search by category, topics"
+                                            value={searchTerm}
+                                            onChange={handleSearchChange} // Added this line
                                         />
                                     </div>
                                 </div>
-
-                                <button className='font-[500] text-[18px] w-[94px]  h-[50px] text-white dark:text-white rounded-md  bg-gradient-to-r from-blue-400 via-green-500 to-blue-500'>
+                                <button
+                                    className='font-[500] text-[18px] w-[94px]  h-[50px] text-white dark:text-white rounded-md  bg-gradient-to-r from-blue-400 via-green-500 to-blue-500'
+                                    onClick={handleSearch} // Added this line
+                                >
                                     Search
                                 </button>
                             </div>
@@ -145,7 +159,7 @@ const Hero = () => {
                                 </div>
                             </div>
                             <div className='mt-5 flex justify-around items-center gap-4 md:gap-16'>
-                              
+
                                 <Link href={''} className='flex justify-center items-center gap-3'>
                                     <p>
                                         View All Categories
@@ -172,13 +186,13 @@ const Hero = () => {
                                             <div className='flex md:flex-row flex-col items-center gap-4'>
                                                 <Image src={'/images/svg2.svg'} alt='' width={600} height={600} className='w-[30px]' />
                                                 <p className='dark:text-white text-black text-[24px] font-[600]'>
-                                                570+
+                                                    570+
                                                 </p>
                                             </div>
                                             <div className='flex md:flex-row flex-col items-center gap-4'>
                                                 <Image src={'/images/svg3.svg'} alt='' width={600} height={600} className='w-[30px]' />
                                                 <p className='dark:text-white text-black text-[24px] font-[600]'>
-                                                Deals
+                                                    Deals
                                                 </p>
                                             </div>
 
