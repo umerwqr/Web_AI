@@ -9,9 +9,6 @@ import { addDoc, collection } from 'firebase/firestore';
 import AppContext from '../appContext';
 import { storage } from '@/config/firebase';
 import { getStorage } from "firebase/storage";
-
-
-
 import { serverTimestamp } from 'firebase/firestore'; // Added this import
 
 // import { setDoc, doc , collection,set } from 'firebase/firestore';

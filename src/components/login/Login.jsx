@@ -29,6 +29,10 @@ const Login = () => {
         return emailRegex.test(name);
     }
 
+    const handleForgotPassword=()=>{
+        console.log("handle forgot password")
+
+    }
     const loginUser = async (e) => {
 
         const checkEmail = validateEmail(newUser.email)
@@ -103,7 +107,15 @@ const Login = () => {
                             </button>
 
                         </Link>
+                        <div className='mt-4 hover:text-blue-700 transition duration-200'>
+                        <Link href={'/ForgotPassword'} onClick={handleForgotPassword}>
+                           
+                        <p>Forgot Password?</p>
+
+                        </Link>
                     </div>
+                    </div>
+                  
                     <div className='my-1' style={{ marginBottom: "40px" }}>
                         <p className="mb-6 text-red-600">If not Registered?</p>
 
