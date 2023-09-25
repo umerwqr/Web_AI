@@ -1,27 +1,98 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from 'next/router';
-
+import cookie from "js-cookie"
 import { BiSolidLock } from "react-icons/bi";
+import { db } from "@/config/firebase";
+import { addDoc, setDoc, onSnapshot, getDocs, query, where, deleteDoc, docs, collection } from 'firebase/firestore';
+
 import {
   BsBookmarkHeart,
   BsBookmarkStar,
   BsFillCalendarFill,
   BsFillShareFill,
 } from "react-icons/bs";
+
 import Tabs from "./Tabs";
+import { message } from "antd";
 
-const DiscoverDynamic = ({object}) => {
+const DiscoverDynamic = ({ object }) => {
+
   const router = useRouter();
- 
+  const [selected, setSelected] = useState(false);
 
-const dateCorrector=(seconds)=>{
-  let sec = seconds * 1000; // Convert to milliseconds
-  let normalDate = new Date(sec).toLocaleDateString('en-GB', { timeZone: 'UTC' });
-  return normalDate
-}
+  var userCookie = cookie.get('user');
+  const [userObject, setUserObject] = useState(null)
+
+  useEffect(() => {
+    if (userCookie) {
+      setUserObject(JSON.parse(userCookie))
+
+    }
+  }, [userCookie]);
+
+  var saves = [];
+  const [SaveLength, setSaveLength] = useState(0)
+
+  useEffect(() => {
+    const getToolSaves = async () => {
+
+      try {
+        const querySnapshot = await getDocs(query(collection(db, 'save'), where('toolId', '==', object[0].TId)));
+        querySnapshot.forEach((doc) => {
+          saves.push({ id: doc.id, ...doc.data() });
+        });
+        setSaveLength(Math.ceil(saves.length - (saves.length / 2)))
+
+
+      } catch (error) {
+        console.error("Error fetching tool saves:", error);
+      }
+    }
+    getToolSaves()
+
+  }, [selected])
+
+  const handleSaveTool = async () => {
+    try {
+      const querySnapshot = await getDocs(query(collection(db, 'save'), where('toolId', '==', object[0].TId), where('userId', '==', userObject?.uid)));
+
+      if (!querySnapshot.empty) {
+        // Document already exists, delete it
+        const docRef = querySnapshot.docs[0].ref;
+        await deleteDoc(docRef);
+        console.log('Document deleted successfully');
+        setSelected(prevSelected => !prevSelected);
+
+      } else {
+        // Document doesn't exist, add it
+        const Tool = await addDoc(collection(db, 'save'), {
+          toolId: object[0].TId,
+          userId: userObject && userObject?.uid
+        });
+        console.log('Document added successfully');
+        setSelected(prevSelected => !prevSelected);
+
+      }
+
+      // Toggle selected state
+    } catch (err) {
+      console.error(err);
+      message.error("");
+    }
+  };
+
+
+
+
+  const dateCorrector = (seconds) => {
+    let sec = seconds * 1000; // Convert to milliseconds
+    let normalDate = new Date(sec).toLocaleDateString('en-GB', { timeZone: 'UTC' });
+    return normalDate
+  }
+
   const data = [
     {
       id: 1,
@@ -49,10 +120,7 @@ const dateCorrector=(seconds)=>{
   const handleTabClick = (tab) => {
     setActiveTab(tab);
   };
-  const [selected, setSelected] = useState(null);
-  const handleButtonClick = (index) => {
-    setSelected(index);
-  };
+
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
 
@@ -79,7 +147,7 @@ const dateCorrector=(seconds)=>{
       <div className="flex md:flex-row flex-col justify-center  gap-8">
         <div className="flex basis-[100%] md:basis-[50%]">
           <Image
-            src={object[0]&&object[0].imageUrl}
+            src={object[0] && object[0].imageUrl}
             alt=""
             width={1080}
             height={1080}
@@ -90,13 +158,13 @@ const dateCorrector=(seconds)=>{
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-[24px] md:text-[40px] font-[700] tracking-wide">
-                {object[0]&&object[0].title}
+                {object[0] && object[0].title}
               </h1>
             </div>
             <div className="flex gap-5 md:gap-10 items-center relative">
               <div className="w-[92px]  bg-gradient-to-br from-[#27B6D7] via-[#07174F54] to-[#27B6D7] bg-opacity-50 rounded-md p-[1px] ">
                 <button className="dark:bg-primary-dark text-[16px] font-[500] bg-white flex justify-center items-center gap-3 h-[40px]  py-1 w-full rounded-md">
-                  33
+                  {SaveLength && SaveLength}
                   <BsBookmarkStar size={20} />
                 </button>
               </div>
@@ -108,7 +176,7 @@ const dateCorrector=(seconds)=>{
           </div>
           <div className="flex items-center gap-5">
             <BsFillCalendarFill size={20} className="text-slate-400" />
-            <p className="text-[16px] font-[400]">{dateCorrector(object[0]&&object[0].joiningDate.seconds)}</p>
+            <p className="text-[16px] font-[400]">{dateCorrector(object[0] && object[0].joiningDate.seconds)}</p>
           </div>
           <div className="flex gap-3">
             <div className='flex  py-2 gap-2'>
@@ -127,7 +195,7 @@ const dateCorrector=(seconds)=>{
           </div>
           <div className="py-5">
             <p className="text-[18px] font-[500]">
-             {object[0]&&object[0].detail}
+              {object[0] && object[0].detail}
             </p>
           </div>
           <div className=" md:max-w-[120px] bg-gradient-to-br from-[#27B6D7] via-[#07174F54] to-[#27B6D7] bg-opacity-50 rounded-md p-[1px] ">
@@ -152,11 +220,13 @@ const dateCorrector=(seconds)=>{
                 />
               </svg>
             </button>
-            <div className="bg-gradient-to-br from-[#27B6D7] via-[#07174F54] to-[#27B6D7] bg-opacity-50 rounded-md p-[1.5px]">
-              <button className={`md:w-[200px] px-7 py-[11px] text-white dark:text-white bg-white dark:bg-primary-dark flex justify-center items-center rounded-md ${selected === 0 ? "border-none bg-gradient-to-r from-blue-400 via-green-500 to-blue-500" : ""}
-              `}
-                onClick={() => handleButtonClick(0)}>
-                <BsBookmarkHeart size={18} className="text-black dark:text-white" />
+            <div
+              onClick={() => handleSaveTool()}
+              className=" bg-gradient-to-br from-[#27B6D7] via-[#07174F54] to-[#27B6D7] bg-opacity-50 rounded-md p-[1.5px]">
+              <button
+                className={` md:w-[200px] px-7 py-[11px] text-white dark:text-white bg-white dark:bg-primary-dark flex justify-center items-center rounded-md ${selected === true ? "border-none bg-gradient-to-r from-blue-400 via-green-500 to-blue-500" : ""}`}
+              >
+                <BsBookmarkHeart size={18} className="text-black  dark:text-white" />
               </button>
             </div>
           </div>
@@ -367,4 +437,4 @@ const dateCorrector=(seconds)=>{
   );
 };
 
-export  {DiscoverDynamic};
+export { DiscoverDynamic };

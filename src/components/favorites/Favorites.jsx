@@ -3,9 +3,13 @@ import React from 'react'
 import { BsBookmarkHeart } from 'react-icons/bs'
 import {BiSolidLock} from "react-icons/bi"
 import { useRouter } from "next/navigation";
+import cookie from "js-cookie"
+import { db } from "@/config/firebase";
+import { addDoc, setDoc,onSnapshot, getDocs, query, where, deleteDoc, docs, collection } from 'firebase/firestore';
 
 const Favorites = () => {
     const router = useRouter();
+    
     const data = [
         {
             id: 1,

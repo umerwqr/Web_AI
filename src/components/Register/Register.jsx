@@ -50,6 +50,7 @@ const Register = () => {
                 })
                 // db.collection('users').doc(userCredential.user.uid).set(userCredential.user);
                 await setDoc(doc(db, "users", userCredential.user.uid), {
+                    UId:userCredential.user.uid,
                     name: newUser.username,
                     email: newUser.email,
                     password: newUser.password,

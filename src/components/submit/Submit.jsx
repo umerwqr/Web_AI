@@ -5,11 +5,14 @@ import { set } from 'firebase/database';
 import { auth } from '@/config/firebase';
 import cookie from "js-cookie"
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { addDoc, collection } from 'firebase/firestore';
+import { addDoc, setDoc, doc, collection } from 'firebase/firestore';
 import AppContext from '../appContext';
 import { storage } from '@/config/firebase';
 import { getStorage } from "firebase/storage";
 import { serverTimestamp } from 'firebase/firestore'; // Added this import
+import { Select } from 'antd';
+const { Option } = Select;
+
 
 // import { setDoc, doc , collection,set } from 'firebase/firestore';
 const Submit = () => {
@@ -19,18 +22,18 @@ const Submit = () => {
   console.log(context.userObject.displayName, " and ", context.userObject.email)
   const [image, setImage] = useState('');
   const [previewImage, setPreviewImage] = useState(null); // Added state for preview
-  const[user,setUser]=useState({})
+  const [user, setUser] = useState({})
   const [userObject, setUserObject] = useState(null)
-  const [ email,setEmail]=useState('')
-console.log("email:",userObject?.email ,);
+  const [email, setEmail] = useState('')
+  console.log("email:", userObject?.email,);
 
   const [toolData, setToolData] = useState({
     title: "",
     detail: "",
     link: "",
     category: "",
-    email:"",
-    
+    email: "",
+
   });
   console.log(toolData)
   var userCookie = cookie.get('user');
@@ -39,7 +42,7 @@ console.log("email:",userObject?.email ,);
     if (userCookie) {
       setUserObject(JSON.parse(userCookie))
 
-    } 
+    }
   }, [userCookie]);
 
   const handleImagePreview = (e) => {
@@ -52,39 +55,48 @@ console.log("email:",userObject?.email ,);
         setImage(file);
       };
       reader.readAsDataURL(file);
-      
+
     }
   };
   const handleSubmitTool = async () => {
-    if((toolData.title && toolData.detail && toolData.category && toolData.link  && image) ===""){
+    if ((toolData.title && toolData.detail && toolData.category && toolData.link && image) === "") {
       message.error("Error, Feiled or Feilds are empty")
       return;
     }
 
-    try{
+    try {
       const imageRef = ref(storage, `/images/ ${image.name}`)
 
       await uploadBytes(imageRef, image);
       const imageUrl = await getDownloadURL(imageRef);
       console.log(imageUrl)
-      addDoc(collection(db, 'tools'), {
+      const Tool = await addDoc(collection(db, 'tools'), {
         detail: toolData.detail,
         link: toolData.link,
         category: toolData.category,
         email: userObject?.email,
         title: toolData.title,
-        imageUrl:imageUrl,
-        user:userObject?.displayName,
+        imageUrl: imageUrl,
+        user: userObject?.displayName,
+        mode: "",
         joiningDate: serverTimestamp(),
       })
+
+
+      const toolDocRef = doc(db, 'tools', Tool._key.path.segments[1]);
+      await setDoc(toolDocRef, { TId: Tool._key.path.segments[1] }, { merge: true });
+
+
+
+
       message.success('Tool successfully Registered');
 
     }
-    catch(err){
-      console.log("error:",err)
+    catch (err) {
+      console.log("error:", err)
       message.error("Failed to register tool")
     }
-  
+
   };
 
   return (
@@ -115,13 +127,32 @@ console.log("email:",userObject?.email ,);
             value={toolData.link}
             onChange={(e) => setToolData({ ...toolData, link: e.target.value })}
             placeholder='Link to the AI tool' type="text" className='dark:placeholder-white focus:outline-none text-[13px] md:text-[16px] pl-3 md:pl-5 w-full py-3 md:py-5  bg-custom-blue border rounded-md dark:border-primary-border border-primary-dark' />
-          <input
-            value={toolData.category}
-            onChange={(e) => setToolData({ ...toolData, category: e.target.value })}
-            placeholder='Tool Category' type="text" className='dark:placeholder-white focus:outline-none text-[13px] md:text-[16px] pl-3 md:pl-5 w-full md:py-5 py-3 bg-custom-blue border rounded-md dark:border-primary-border border-primary-dark' />
+          <div className='dark:placeholder-white flex flex-row items-center focus:outline-none text-[13px] md:text-[16px] pl-3 md:pl-5 w-full py-3 md:py-5 bg-custom-blue border rounded-md dark:border-primary-border border-primary-dark'>
+          <p className='mr-10'>{toolData.category? <>Category : {toolData.category}</>:<>Select Category: </>}</p>
 
+            <Select
+              placeholder="Select a category"
+              style={{
+                width: '30%',
+                borderRadius: '0.375rem',
+                border: 'none',
+                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+              }}
+              dropdownClassName="custom-dropdown"
+              onChange={(value) => setToolData({ ...toolData, category: value })}
+              value={toolData.category}
+            >
+              <Option value="Text">Text</Option>
+              <Option value="Image">Image</Option>
+              <Option value="Code">Code</Option>
+              <Option value="Audio">Audio</Option>
+              <Option value="Video">Video</Option>
+              <Option value="Business">Business</Option>
+              <Option value="Others">Others</Option>
+            </Select>
+          </div>
           <input
-          disabled
+            disabled
             value={userObject?.email}
             placeholder='Your Email Address' type="email" className='dark:placeholder-white  text-gray-600 focus:outline-none text-[13px] md:text-[16px] pl-3 md:pl-5 w-full md:py-5 py-3  bg-custom-blue border rounded-md dark:border-primary-border border-primary-dark' />
           {previewImage && <img src={previewImage} alt="Preview" className="my-4 max-w-[200px]" />}
@@ -133,9 +164,9 @@ console.log("email:",userObject?.email ,);
             </label>
 
 
-              <button onClick={handleSubmitTool} className='mt-3 font-[500] md:text-[18px] w-[130px] h-[40px] md:h-[50px] text-white dark:text-white rounded-md bg-gradient-to-r from-blue-400 via-green-500 to-blue-500'>
-                Submit
-              </button>
+            <button onClick={handleSubmitTool} className='mt-3 font-[500] md:text-[18px] w-[130px] h-[40px] md:h-[50px] text-white dark:text-white rounded-md bg-gradient-to-r from-blue-400 via-green-500 to-blue-500'>
+              Submit
+            </button>
 
           </div>
         </div>
