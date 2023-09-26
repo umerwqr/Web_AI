@@ -12,13 +12,37 @@ const people = [
     },
     {
         id: 2,
-        name: 'AI',
+        name: 'Text',
         avatar:
             '/images/doc.svg',
     },
     {
         id: 3,
-        name: 'ML',
+        name: 'Code',
+        avatar:
+            '/images/doc.svg',
+    },
+    {
+        id: 4,
+        name: 'Audio',
+        avatar:
+            '/images/doc.svg',
+    },
+    {
+        id: 5,
+        name: 'Video',
+        avatar:
+            '/images/doc.svg',
+    },
+    {
+        id: 6,
+        name: 'Business',
+        avatar:
+            '/images/doc.svg',
+    },
+    {
+        id: 7,
+        name: 'Image',
         avatar:
             '/images/doc.svg',
     },
@@ -35,15 +59,15 @@ const people2 = [
         name: 'Old',
         avatar:
             '/images/time.svg',
-    },
-    {
-        id: 3,
-        name: 'New',
-        avatar:
-            '/images/time.svg',
-    },
+    }
+    // ,
+    // {
+    //     id: 3,
+    //     name: 'New',
+    //     avatar:
+    //         '/images/time.svg',
+    // },
 ]
-
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
 }
@@ -51,6 +75,10 @@ function classNames(...classes) {
 const LatestNews = () => {
     const [selected, setSelected] = useState(people[0])
     const [selected2, setSelected2] = useState(people2[0])
+    console.log("selected naaame::",selected2.name)
+
+
+
     return (
         <div>
             <div className='absolute md:block hidden r bg-[#2CD7834F]/10 w-[338px] h-[338px] right-0 rounded-full blur-3xl'></div>
@@ -70,7 +98,7 @@ const LatestNews = () => {
                                 <>
                                     <Listbox.Label className="block text-left text-[16px] font-[400] leading-6 dark:text-white">Filter by Category</Listbox.Label>
                                     <div className="relative mt-2">
-                                        <Listbox.Button className="w-[140px] md:w-[169px] h-[50px]  bg-gradient-to-br from-[#27B6D7] via-[#526bc454] to-[#15CADF54] bg-opacity-50 rounded-md mx-auto p-[1px]">
+                                        <Listbox.Button className="w-[150px] md:w-[199px] h-[50px]  bg-gradient-to-br from-[#27B6D7] via-[#526bc454] to-[#15CADF54] bg-opacity-50 rounded-md mx-auto p-[1px]">
                                             <span className="flex items-center bg-white dark:bg-primary-dark py-3 pl-5 rounded-md">
                                                 <img src={selected.avatar} alt="" className="h-5 w-5 flex-shrink-0 " />
                                                 <span className="ml-3 block truncate">{selected.name}</span>
@@ -180,7 +208,7 @@ const LatestNews = () => {
                     </div>
                 </div>
                 <div>
-                    <News />
+                    <News Category={selected.name} SortBy={selected2.name}/>
                 </div>
                 <div className='mb-20'>
                     <button className="font-[500] text-[18px] w-[153px] h-[50px] z-20   dark:text-white border border-[#15CADF] bg-transparent rounded-md">

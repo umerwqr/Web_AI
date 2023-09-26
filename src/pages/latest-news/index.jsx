@@ -5,6 +5,8 @@ import React from 'react'
 import { Manrope } from "next/font/google";
 const font = Manrope({ subsets: ["latin"] });
 const index = () => {
+
+    
   return (
     <div className={`dark:bg-primary-dark ${font.className}`}>
     <Wrapper>

@@ -20,9 +20,9 @@ const Navbar = () => {
   const { systemTheme, theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
-  const [userObject, setUserObject] = useState(null)
   var userCookie = Cookies.get('user');
-
+  
+  const [userObject, setUserObject] = useState(null)
   useEffect(() => {
     setMounted(true);
     if (userCookie) {

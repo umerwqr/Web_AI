@@ -6,7 +6,9 @@ import { useRouter } from 'next/router';
 import cookie from "js-cookie"
 import { BiSolidLock } from "react-icons/bi";
 import { db } from "@/config/firebase";
+import Loader2 from "../Loader2";
 import { addDoc, setDoc, onSnapshot, getDocs, query, where, deleteDoc, docs, collection } from 'firebase/firestore';
+
 
 import {
   BsBookmarkHeart,
@@ -25,7 +27,7 @@ const DiscoverDynamic = ({ object }) => {
 
   var userCookie = cookie.get('user');
   const [userObject, setUserObject] = useState(null)
-
+  const [loading,setLoading]=useState(false)
   useEffect(() => {
     if (userCookie) {
       setUserObject(JSON.parse(userCookie))
@@ -33,29 +35,77 @@ const DiscoverDynamic = ({ object }) => {
     }
   }, [userCookie]);
 
-  var saves = [];
-  const [SaveLength, setSaveLength] = useState(0)
+
+  const [tools, setTool] = useState(null)
+ console.log("teeeeooooooools::",tools)
 
   useEffect(() => {
-    const getToolSaves = async () => {
+    const fetchUsers = async () => {
+        console.log("helloo")
+        try {
+            const querySnapshot = await getDocs(collection(db, "tools"));
+            const toolList = querySnapshot.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+            }));
+            setTool(toolList);
+        } catch (error) {
+            console.error('Error fetching users:', error, " error end");
+        }
+    };
+    fetchUsers();
+}, []);
 
+
+
+  // Check if tools is not null to avoid errors
+ 
+    const featuredTools = tools&&tools.filter(tool => tool.mode === 'Featured');
+    console.log("Featured Tools:", featuredTools);
+  
+  const [check2,setCheck2]=useState(false)
+  var saves = [];
+  const [SaveLength, setSaveLength] = useState(0)
+  console.log(saves)
+  useEffect(() => {
+    const handleCheck = async () => {
+      try {
+        const querySnapshot = await getDocs(query(
+          collection(db, 'save'),
+          where('toolId', '==', object[0].TId),
+          where('userId', '==', userObject?.uid)
+        ));
+    
+        if (!querySnapshot.empty) {
+          console.log('Document exists');
+          setCheck2(true)
+          // Do something if the document exists
+        } else {
+          console.log('Document does not exist');
+          setCheck2(false)
+
+          // Do something if the document does not exist
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    handleCheck()
+    const getToolSaves = async () => {
       try {
         const querySnapshot = await getDocs(query(collection(db, 'save'), where('toolId', '==', object[0].TId)));
-        querySnapshot.forEach((doc) => {
-          saves.push({ id: doc.id, ...doc.data() });
-        });
-        setSaveLength(Math.ceil(saves.length - (saves.length / 2)))
-
-
+        setSaveLength(querySnapshot.size);
       } catch (error) {
         console.error("Error fetching tool saves:", error);
       }
     }
-    getToolSaves()
-
-  }, [selected])
+  
+    getToolSaves();
+  
+  }, [selected,check2]);
 
   const handleSaveTool = async () => {
+    setLoading(true)
     try {
       const querySnapshot = await getDocs(query(collection(db, 'save'), where('toolId', '==', object[0].TId), where('userId', '==', userObject?.uid)));
 
@@ -64,6 +114,7 @@ const DiscoverDynamic = ({ object }) => {
         const docRef = querySnapshot.docs[0].ref;
         await deleteDoc(docRef);
         console.log('Document deleted successfully');
+        setLoading(false)
         setSelected(prevSelected => !prevSelected);
 
       } else {
@@ -73,6 +124,7 @@ const DiscoverDynamic = ({ object }) => {
           userId: userObject && userObject?.uid
         });
         console.log('Document added successfully');
+        setLoading(false)
         setSelected(prevSelected => !prevSelected);
 
       }
@@ -80,7 +132,8 @@ const DiscoverDynamic = ({ object }) => {
       // Toggle selected state
     } catch (err) {
       console.error(err);
-      message.error("");
+      message.error("You are not Logged in");
+      setLoading(false)
     }
   };
 
@@ -220,15 +273,19 @@ const DiscoverDynamic = ({ object }) => {
                 />
               </svg>
             </button>
+<div>
+            {loading?<><Loader2/></>:<> </>}
+
             <div
               onClick={() => handleSaveTool()}
               className=" bg-gradient-to-br from-[#27B6D7] via-[#07174F54] to-[#27B6D7] bg-opacity-50 rounded-md p-[1.5px]">
               <button
-                className={` md:w-[200px] px-7 py-[11px] text-white dark:text-white bg-white dark:bg-primary-dark flex justify-center items-center rounded-md ${selected === true ? "border-none bg-gradient-to-r from-blue-400 via-green-500 to-blue-500" : ""}`}
+                className={` md:w-[200px] px-7 py-[11px] text-white dark:text-white bg-white dark:bg-primary-dark flex justify-center items-center rounded-md ${check2 ? "border-none bg-gradient-to-r from-blue-400 via-green-500 to-blue-500" : ""}`}
               >
                 <BsBookmarkHeart size={18} className="text-black  dark:text-white" />
               </button>
             </div>
+</div>
           </div>
           <div className="bg-gradient-to-br from-[#27B6D7] via-[#07174F54] to-[#27B6D7] bg-opacity-50 rounded-md p-[1.5px]">
             <Link href={'/review'}>
@@ -373,10 +430,10 @@ const DiscoverDynamic = ({ object }) => {
           Featured AI Tools
         </h1>
         <div className='grid grid-cols-1 md:grid-cols-3 gap-5 mt-10'>
-          {data.map((item, index) => (
+          {featuredTools&&featuredTools.map((item, index) => (
             <div onClick={() => router.push("/discover-dynamic")} key={index} className='cursor-pointer w-[320px] md:w-[400px] bg-gradient-to-br from-[#27B6D7] via-[#07174F54] to-[#27B6D7] bg-opacity-50 rounded-md mx-auto p-[1px]  '>
               <div className='w-full p-1 backdrop-blur-2xl bg-white dark:bg-primary-dark/90 h-full rounded-md'>
-                <Image src={item.img} width={347} height={263} alt='' className='w-[300px] h-[220px] md:w-[360px] md:h-[220px] rounded-[10px] mx-auto  my-3 object-cover' />
+                <Image src={item.imageUrl} width={347} height={263} alt='' className='w-[300px] h-[220px] md:w-[360px] md:h-[220px] rounded-[10px] mx-auto  my-3 object-cover' />
                 <div className='px-5 flex items-center gap-3'>
                   <p className='text-[24px] font-[700]'>{item.title}</p>
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -397,7 +454,7 @@ const DiscoverDynamic = ({ object }) => {
                 </div>
                 <div>
                   <p className='text-left pl-5  text-[14px] font-[400]'>
-                    {item.desc}
+                    {item.detail}
                   </p>
                 </div>
                 <div className='ml-5 mt-3 max-w-[120px] bg-gradient-to-br from-[#27B6D7] via-[#07174F54] to-[#27B6D7] bg-opacity-50 rounded-md p-[1px] '>

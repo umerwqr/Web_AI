@@ -6,10 +6,11 @@ import { AiOutlineSearch } from 'react-icons/ai'
 import { RiToolsFill } from 'react-icons/ri'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-const Hero = ({ onSearch }) => {
+const Hero = ({ onSearch, CategoryFilter }) => {
     const [isDropdownOpen, setDropdownOpen] = useState(false);
     const [selected, setSelected] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
+    const [category, setCategory] = useState('');
 
     const handleSearchChange = (e) => {
         setSearchTerm(e.target.value);
@@ -18,11 +19,23 @@ const Hero = ({ onSearch }) => {
     const handleSearch = () => {
         onSearch(searchTerm);
     };
+    const handleCategoryFilter = (value) => {
 
+        CategoryFilter(value)
+
+    }
     const handleButtonClick = (index) => {
         setSelected(index);
+
+        // Reset the category state when a button other than filter is clicked
+        if (index !== -1) {
+            setCategory('');
+            CategoryFilter('')
+        }
     };
+
     const toggleDropdown = () => {
+
         setDropdownOpen(!isDropdownOpen);
     };
 
@@ -106,22 +119,25 @@ const Hero = ({ onSearch }) => {
                                                 style={{ background: "rgba(181, 212, 255, 0.14)" }}
                                             >
                                                 <div className="flex flex-col justify-start items-start px-3 gap-3 ">
-                                                    <button onClick={toggleDropdown} className="dark:text-white text-[14px] font-[500] hover:dark:text-[#2CD880] hover:text-[#2CD880] transition-all duration-200 ease-in">
+                                                    <button onClick={() => { toggleDropdown(); handleCategoryFilter('') }} className="dark:text-white text-[14px] font-[500] hover:dark:text-[#2CD880] hover:text-[#2CD880] transition-all duration-200 ease-in">
+                                                        All
+                                                    </button>
+                                                    <button onClick={() => { toggleDropdown(); handleCategoryFilter("Text") }} className="dark:text-white text-[14px] font-[500] hover:dark:text-[#2CD880] hover:text-[#2CD880] transition-all duration-200 ease-in">
                                                         Text
                                                     </button>
-                                                    <button onClick={toggleDropdown} className="dark:text-white text-[14px] font-[500] hover:dark:text-[#2CD880]  hover:text-[#2CD880] transition-all duration-200 ease-in">
+                                                    <button onClick={() => { toggleDropdown(); handleCategoryFilter("Image") }} className="dark:text-white text-[14px] font-[500] hover:dark:text-[#2CD880]  hover:text-[#2CD880] transition-all duration-200 ease-in">
                                                         Image
                                                     </button>
-                                                    <button onClick={toggleDropdown} className="dark:text-white text-[14px] font-[500] hover:dark:text-[#2CD880] hover:text-[#2CD880] transition-all duration-200 ease-in">
+                                                    <button onClick={() => { toggleDropdown(); handleCategoryFilter("Code") }} className="dark:text-white text-[14px] font-[500] hover:dark:text-[#2CD880] hover:text-[#2CD880] transition-all duration-200 ease-in">
                                                         Code
                                                     </button>
-                                                    <button onClick={toggleDropdown} className="dark:text-white text-[14px] font-[500] hover:dark:text-[#2CD880] hover:text-[#2CD880] transition-all duration-200 ease-in">
+                                                    <button onClick={() => { toggleDropdown(); handleCategoryFilter("Video") }} className="dark:text-white text-[14px] font-[500] hover:dark:text-[#2CD880] hover:text-[#2CD880] transition-all duration-200 ease-in">
                                                         Video
                                                     </button>
-                                                    <button onClick={toggleDropdown} className="dark:text-white text-[14px] font-[500] hover:dark:text-[#2CD880] hover:text-[#2CD880] transition-all duration-200 ease-in">
+                                                    <button onClick={() => { toggleDropdown(); handleCategoryFilter("Audio") }} className="dark:text-white text-[14px] font-[500] hover:dark:text-[#2CD880] hover:text-[#2CD880] transition-all duration-200 ease-in">
                                                         Audio
                                                     </button>
-                                                    <button onClick={toggleDropdown} className="dark:text-white text-[14px] font-[500] hover:dark:text-[#2CD880] hover:text-[#2CD880] transition-all duration-200 ease-in">
+                                                    <button onClick={() => { toggleDropdown(); handleCategoryFilter("Business") }} className="dark:text-white text-[14px] font-[500] hover:dark:text-[#2CD880] hover:text-[#2CD880] transition-all duration-200 ease-in">
                                                         Business
                                                     </button>
                                                 </div>
@@ -130,9 +146,10 @@ const Hero = ({ onSearch }) => {
                                     </div>
                                 </div>
                                 <div className=' bg-gradient-to-br from-[#27B6D7] via-[#526bc454] to-[#15CADF54] bg-opacity-50 rounded-md mx-auto p-[1px]'>
-                                    <button className={`dark:bg-primary-dark bg-white flex justify-center items-center gap-3 px-4 h-[50px] rounded-md ${selected === 0 ? "border-none bg-gradient-to-r from-blue-400 via-green-500 to-blue-500" : ""
-                                        }`}
-                                        onClick={() => handleButtonClick(0)}>
+                                    <button
+                                        className={`dark:bg-primary-dark bg-white flex justify-center items-center gap-3 px-4 h-[50px] rounded-md ${selected === 0 ? "border-none bg-gradient-to-r from-blue-400 via-green-500 to-blue-500" : ""}`}
+                                        onClick={() => handleButtonClick(0)}
+                                    >
                                         Content Writing
                                     </button>
                                 </div>

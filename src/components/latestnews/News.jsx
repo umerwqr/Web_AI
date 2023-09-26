@@ -1,33 +1,61 @@
 import Image from 'next/image'
-import React,{useState, useEffect} from 'react'
+import React, { useState, useEffect } from 'react'
 import { BsBookmarkStar } from 'react-icons/bs'
-import {db} from "@/config/firebase"
-import { collection, getDocs } from 'firebase/firestore';
+import { db } from "@/config/firebase"
+import { collection, getDocs, query, where } from 'firebase/firestore';
 import { useRouter } from "next/navigation";
+import Loader from '../Loader';
 
 
-const News = () => {
-    const router =useRouter();
-    const[ news,setNews]=useState(null)
+const News = ({ Category, SortBy }) => {
+    const router = useRouter();
+    const [news, setNews] = useState(null);
 
-    
-    useEffect(() => {
-      const fetchUsers = async () => {
-        console.log("helloo")
-        try {
-          const querySnapshot = await getDocs(collection(db, "news"));
-          const toolList = querySnapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-          }));
-          setNews(toolList);
-        } catch (error) {
-            console.log(error)
+    console.log("innnn newwws:", Category, SortBy);
+
+    function truncateText(text, maxWords) {
+        const words = text.split(' ');
+        if (words.length > maxWords) {
+            return words.slice(0, maxWords).join(' ') + ' ...';
         }
-      };
-      fetchUsers();
-    }, []);
-  console.log("news",news)
+        return text;
+    }
+
+    useEffect(() => {
+        const fetchNews = async () => {
+            console.log("helloo");
+            try {
+                let querySnapshot;
+
+                if (Category === "All") {
+                    querySnapshot = await getDocs(collection(db, "news"));
+                } else {
+                    querySnapshot = await getDocs(
+                        query(collection(db, "news"), where("category", "==", Category))
+                    );
+                }
+
+                const newsList = querySnapshot.docs.map((doc) => ({
+                    id: doc.id,
+                    ...doc.data(),
+                }));
+
+                // Sort the news based on SortBy
+                if (SortBy === "New") {
+                    newsList.sort((a, b) => b.joiningDate.seconds - a.joiningDate.seconds);
+                } else if (SortBy === "Old") {
+                    newsList.sort((a, b) => a.joiningDate.seconds - b.joiningDate.seconds);
+                }
+
+                setNews(newsList);
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        fetchNews();
+    }, [Category, SortBy]);
+
+    console.log("news", news);
     const data = [
         {
             id: 1,
@@ -78,7 +106,7 @@ const News = () => {
             posted: '4 days ago'
         },
     ]
-    const dateCorrector=(seconds)=>{
+    const dateCorrector = (seconds) => {
         let sec = seconds * 1000; // Convert to milliseconds
         let normalDate = new Date(sec).toLocaleDateString('en-GB', { timeZone: 'UTC' });
         return normalDate
@@ -87,7 +115,7 @@ const News = () => {
         <div className="mt-16 mb-14 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 xl:grid-cols-3 gap-10">
             <div className='absolute top-[50rem] left-0 bg-[#2CD7834F]/10 w-[300px] md:w-[400px] h-[338px] rounded-full blur-3xl'></div>
 
-            {news&&news.map((item, index) => (
+            {news && news.map((item, index) => (
                 <div
                     key={index}
                     className="w-[330px] md:w-[393px] rounded-md mx-auto border-[2px] border-primary-border"
@@ -118,7 +146,7 @@ const News = () => {
                                         </div>
 
                                     </div>
-                                    <p className='text-[24px] font-[600] text-left'>{item.discription}</p>
+                                    <p className='text-[24px] font-[600] text-left'>{truncateText(item.discription, 13)}</p>
                                     <button className='font-[500] text-[18px] w-[180px]  h-[50px] text-white dark:text-white rounded-md  bg-gradient-to-r from-blue-400 via-green-500 to-blue-500'>
                                         Visit Website
                                     </button>
