@@ -5,6 +5,7 @@ import { BsBookmarkHeart, BsBookmarkStar } from "react-icons/bs";
 import { useRouter } from "next/navigation";
 import { BiSolidLock } from "react-icons/bi";
 import { db } from "@/config/firebase";
+import Link from "next/link";
 import { collection, getDocs } from 'firebase/firestore';
 import Loader from "../Loader";
 const TopAiTools = ({ searchTerm, Category }) => {
@@ -213,6 +214,8 @@ const TopAiTools = ({ searchTerm, Category }) => {
                                                     <p>#besttool</p>
                                                 </div>
                                                 <div className="flex gap-4 mx-5  items-center mt-3 mb-3">
+                                                  
+                                                   
                                                     <button className="w-full flex items-center px-10 py-2 justify-center gap-3 text-white dark:text-white rounded-md  bg-gradient-to-r from-blue-400 via-green-500 to-blue-500">
                                                         Visit Website
                                                         <svg
@@ -228,6 +231,7 @@ const TopAiTools = ({ searchTerm, Category }) => {
                                                             />
                                                         </svg>
                                                     </button>
+                                              
                                                 </div>
                                             </div>
                                         </div>

@@ -5,6 +5,7 @@ import { db } from "@/config/firebase"
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { useRouter } from "next/navigation";
 import Loader from '../Loader';
+import Link from 'next/link';
 
 
 const News = ({ Category, SortBy }) => {
@@ -146,10 +147,16 @@ const News = ({ Category, SortBy }) => {
                                         </div>
 
                                     </div>
+                                   
                                     <p className='text-[24px] font-[600] text-left'>{truncateText(item.discription, 13)}</p>
-                                    <button className='font-[500] text-[18px] w-[180px]  h-[50px] text-white dark:text-white rounded-md  bg-gradient-to-r from-blue-400 via-green-500 to-blue-500'>
+                                    <Link href={`${item.toolLink}`}>
+                                 
+                                    <button
+                                    
+                                     className='font-[500] text-[18px] w-[180px]  h-[50px] text-white dark:text-white rounded-md  bg-gradient-to-r from-blue-400 via-green-500 to-blue-500'>
                                         Visit Website
                                     </button>
+                                    </Link>
                                     <div className='border-t border-primary-border w-full'>
                                         <p className='text-left text-slate-400 font-[400] text-[16px] pt-4 pb-3'>
                                             Posted: {dateCorrector(item.joiningDate.seconds)}

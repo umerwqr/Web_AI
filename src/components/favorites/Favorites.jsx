@@ -65,6 +65,7 @@ const Favorites = () => {
                     id: doc.id,
                     ...doc.data(),
                 }));
+                setLoading(false)
 
                 if (savesArray.length > 0) {
                     const filteredTools = toolList.filter(tool => savesArray.some(save => save.toolId === tool.id));
@@ -76,6 +77,7 @@ const Favorites = () => {
 
             } catch (error) {
                 console.error('Error fetching tools:', error);
+                setLoading(false)
             }
         };
         fetchTools();
