@@ -5,27 +5,120 @@ import { set } from 'firebase/database';
 import { auth } from '@/config/firebase';
 import cookie from "js-cookie"
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { addDoc, setDoc, doc, collection } from 'firebase/firestore';
+import { addDoc, getDocs, query, where, setDoc, doc, collection } from 'firebase/firestore';
 import AppContext from '../appContext';
 import { storage } from '@/config/firebase';
 import { getStorage } from "firebase/storage";
 import { serverTimestamp } from 'firebase/firestore'; // Added this import
 import { Select } from 'antd';
+import { Menu, Dropdown, Button } from 'antd';
+import { DownOutlined } from '@ant-design/icons';
 import Loader from '../Loader';
-const { Option } = Select;
+const { Option, OptGroup } = Select;
 
+
+
+const categories = [
+  "Text",
+  "Image",
+  "Code",
+  "Audio",
+  "Video",
+  "3D",
+  "Business",
+  "Others"
+];
+
+const options = {
+  Text: [
+    "COPYWRITING",
+    "EMAIL ASSISTANT",
+    "GENERAL WRITING",
+    "PARAPHRASER",
+    "PROMPTS",
+    "SEO",
+    "SOCIAL MEDIA ASSISTANT",
+    "STORY TELLER",
+    "SUMMARIZER"
+  ],
+  Image: [
+    "ART",
+    "AVATARS",
+    "DESIGN ASSISTANT",
+    "IMAGE EDITING",
+    "IMAGE GENERATOR",
+    "LOGO GENERATOR"
+  ],
+  Code: [
+    "CODE ASSISTANT",
+    "DEVELOPER TOOLS",
+    "LOW-CODE/NO-CODE",
+    "SPREADSHEETS",
+    "SQL"
+  ],
+  Audio: [
+    "AUDIO EDITING",
+    "MUSIC",
+    "TEXT TO SPEECH",
+    "TRANSCRIBER"
+  ],
+  Video: [
+    "PERSONALIZED VIDEOS",
+    "VIDEO EDITING",
+    "VIDEO GENERATOR"
+  ],
+  "3D": ["3D"],
+  Business: [
+    "CUSTOMER SUPPORT",
+    "E-COMMERCE",
+    "EDUCATION ASSISTANT",
+    "FASHION",
+    "FINANCE",
+    "HUMAN RESOURCES",
+    "LEGAL ASSISTANT",
+    "PRESENTATIONS",
+    "PRODUCTIVITY",
+    "REAL ESTATE",
+    "SALES",
+    "STARTUP TOOLS"
+  ],
+  Others: [
+    "DATING",
+    "EXPERIMENTS",
+    "FITNESS",
+    "FUN TOOLS",
+    "GAMING",
+    "GIFT IDEAS",
+    "HEALTHCARE",
+    "LIFE ASSISTANT",
+    "MEMORY",
+    "RELIGION",
+    "RESEARCH",
+    "RESOURCES",
+    "SEARCH ENGINE",
+    "TRAVEL"
+  ]
+};
 
 // import { setDoc, doc , collection,set } from 'firebase/firestore';
 const Submit = () => {
   const storage = getStorage();
   const [loading, setLoading] = useState(false);
+  const [userObject, setUserObject] = useState(null)
+  var userCookie = cookie.get('user');
 
+
+  useEffect(() => {
+    if (userCookie) {
+      setUserObject(JSON.parse(userCookie))
+
+    }
+  }, [userCookie]);
   const context = useContext(AppContext)
   console.log(context.userObject.displayName, " and ", context.userObject.email)
   const [image, setImage] = useState('');
   const [previewImage, setPreviewImage] = useState(null); // Added state for preview
   const [user, setUser] = useState({})
-  const [userObject, setUserObject] = useState(null)
   const [email, setEmail] = useState('')
   console.log("email:", userObject?.email,);
 
@@ -34,18 +127,35 @@ const Submit = () => {
     detail: "",
     link: "",
     category: "",
+    subCategory:"",
     email: "",
 
   });
   console.log(toolData)
-  var userCookie = cookie.get('user');
-
   useEffect(() => {
-    if (userCookie) {
-      setUserObject(JSON.parse(userCookie))
+    const paid = async () => {
+      const email = userObject?.email;
 
-    }
-  }, [userCookie]);
+      if (email) {
+        const querySnapshot = await getDocs(query(collection(db, 'Payment'), where('email', '==', email)));
+
+        if (querySnapshot.size === 0) {
+          // If no documents with the same email exist, add a new payment
+          await addDoc(collection(db, 'Payment'), {
+            email: email,
+            payment: 120,
+            joiningDate: serverTimestamp(),
+          });
+        } else {
+          // If a document with the same email already exists, you can choose to update it or take some other action
+          console.log('User with this email already exists');
+        }
+      }
+    };
+
+    paid();
+  }, [userObject]);
+
 
   const handleImagePreview = (e) => {
 
@@ -79,6 +189,7 @@ const Submit = () => {
         detail: toolData.detail,
         link: toolData.link,
         category: toolData.category,
+        subCategory:toolData.subCategory,
         email: userObject?.email,
         title: toolData.title,
         imageUrl: imageUrl,
@@ -107,10 +218,38 @@ const Submit = () => {
 
   };
 
+ 
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedOption, setSelectedOption] = useState(null);
+
+ 
+
+  const handleMenuClick = (e) => {
+    const [category, option] = e.keyPath;
+    setSelectedCategory(category);
+    setSelectedOption(option);
+    const [first,secondValue] = category.split(","); // Use 'option' instead of 'category'
+    
+    setToolData({ ...toolData,category: option , subCategory: secondValue }); // Set 'secondValue' as the category
+
+    
+  };
+  console.log(toolData)
+  const menu = (
+    <Menu onClick={handleMenuClick}>
+      {categories.map((category) => (
+        <Menu.SubMenu key={category} title={category}>
+          {options[category].map((option) => (
+            <Menu.Item key={[category, option]}>{option}</Menu.Item>
+          ))}
+        </Menu.SubMenu>
+      ))}
+    </Menu>
+  );
   return (
     <>
       {loading ? (
-        <div style={{ color:"black", width: "100%", height: "100px", display: "flex", justifyContent: "center", alignItems: "center", }}>
+        <div style={{ color: "black", width: "100%", height: "100px", display: "flex", justifyContent: "center", alignItems: "center", }}>
 
           <Loader />
         </div>
@@ -143,9 +282,14 @@ const Submit = () => {
                 onChange={(e) => setToolData({ ...toolData, link: e.target.value })}
                 placeholder='Link to the AI tool' type="text" className='dark:placeholder-white focus:outline-none text-[13px] md:text-[16px] pl-3 md:pl-5 w-full py-3 md:py-5  bg-custom-blue border rounded-md dark:border-primary-border border-primary-dark' />
               <div className='dark:placeholder-white flex flex-row items-center focus:outline-none text-[13px] md:text-[16px] pl-3 md:pl-5 w-full py-3 md:py-5 bg-custom-blue border rounded-md dark:border-primary-border border-primary-dark'>
-                <p className='mr-10'>{toolData.category ? <>Category : {toolData.category}</> : <>Select Category: </>}</p>
+                <p className='mr-10'>{toolData.subCategory ? <>Category : {toolData.subCategory}</> : <>Select Category: </>}</p>
 
-                <Select
+                <Dropdown overlay={menu} trigger={['click']}>
+                  <Button>
+                    Select a category <DownOutlined />
+                  </Button>
+                </Dropdown>
+                {/* <Select
                   placeholder="Select a category"
                   style={{
                     width: '30%',
@@ -157,14 +301,85 @@ const Submit = () => {
                   onChange={(value) => setToolData({ ...toolData, category: value })}
                   value={toolData.category}
                 >
-                  <Option value="Text">Text</Option>
-                  <Option value="Image">Image</Option>
-                  <Option value="Code">Code</Option>
-                  <Option value="Audio">Audio</Option>
-                  <Option value="Video">Video</Option>
-                  <Option value="Business">Business</Option>
-                  <Option value="Others">Others</Option>
-                </Select>
+
+                  <OptGroup label="Text">
+                    <Option value="COPYWRITING">COPYWRITING</Option>
+                    <Option value="EMAIL ASSISTANT">EMAIL ASSISTANT</Option>
+                    <Option value="GENERAL WRITING">GENERAL WRITING</Option>
+                    <Option value="PARAPHRASER">PARAPHRASER</Option>
+                    <Option value="PROMPTS">PROMPTS</Option>
+                    <Option value="SEO">SEO</Option>
+                    <Option value="SOCIAL MEDIA ASSISTANT">SOCIAL MEDIA ASSISTANT</Option>
+                    <Option value="STORY TELLER">STORY TELLER</Option>
+                    <Option value="SUMMARIZER">SUMMARIZER</Option>
+
+
+                  </OptGroup>
+                  <OptGroup label="Image">
+                    <Option value="ART">ART</Option>
+                    <Option value="AVATARS">AVATARS</Option>
+                    <Option value="DESIGN ASSISTANT">DESIGN ASSISTANT</Option>
+                    <Option value="IMAGE EDITING">IMAGE EDITING</Option>
+                    <Option value="IMAGE GENERATOR">IMAGE GENERATOR</Option>
+                    <Option value="LOGO GENERATOR">LOGO GENERATOR</Option>
+
+                  </OptGroup>
+                  <OptGroup label="Code">
+                    <Option value="CODE ASSISTANT">CODE ASSISTANT</Option>
+                    <Option value="DEVELOPER TO">DEVELOPER TO</Option>
+                    <Option value="LOW-CODE/NO-CODE">LOW-CODE/NO-CODE</Option>
+                    <Option value="SPREADSHEETS">SPREADSHEETS</Option>
+                    <Option value="SQL">SQL</Option>
+
+                  </OptGroup>
+                  <OptGroup label="Audio">
+                    <Option value="AUDIO EDITING">AUDIO EDITING</Option>
+                    <Option value="MUSIC">MUSIC</Option>
+                    <Option value="TEXT TO SPEECH">TEXT TO SPEECH</Option>
+                    <Option value="TRANSCRIBER">TRANSCRIBER</Option>
+
+                  </OptGroup>
+                  <OptGroup label="Video">
+                    <Option value="PERSONALIZED VIDEOS">PERSONALIZED VIDEOS</Option>
+                    <Option value="VIDEO EDITING">VIDEO EDITING</Option>
+                    <Option value="VIDEO GENERATOR">VIDEO GENERATOR</Option>
+
+                  </OptGroup>
+                  <OptGroup label="3D">
+                    <Option value="3D">3D</Option>
+                  </OptGroup>
+                  <OptGroup label="Business">
+                    <Option value="CUSTOMER SUPPORT">CUSTOMER SUPPORT</Option>
+                    <Option value="E-COMMERCE">E-COMMERCE</Option>
+                    <Option value="EDUCATION ASSISTANT">EDUCATION ASSISTANT</Option>
+                    <Option value="FASHION">FASHION</Option>
+                    <Option value="FINANCE">FINANCE</Option>
+                    <Option value="HUMAN RESOURCES">HUMAN RESOURCES</Option>
+                    <Option value="LEGAL ASSISTANT">LEGAL ASSISTANT</Option>
+                    <Option value="PRESENTATIONS">PRESENTATIONS</Option>
+                    <Option value="PRODUCTIVITY">PRODUCTIVITY</Option>
+                    <Option value="REAL ESTATE">REAL ESTATE</Option>
+                    <Option value="SALES">SALES</Option>
+                    <Option value="STARTUP TOOLS">STARTUP TOOLS</Option>
+                  </OptGroup>
+                  <OptGroup label="Others">
+                    <Option value="DATING">DATING</Option>
+                    <Option value="EXPERIMENTS">EXPERIMENTS</Option>
+                    <Option value="FITNESS">FITNESS</Option>
+                    <Option value="FUN TOOLS">FUN TOOLS</Option>
+                    <Option value="GAMING">GAMING</Option>
+                    <Option value="GIFT IDEAS">GIFT IDEAS</Option>
+                    <Option value="HEALTHCARE">HEALTHCARE</Option>
+                    <Option value="LIFE ASSISTANT">LIFE ASSISTANT</Option>
+                    <Option value="MEMORY">MEMORY</Option>
+                    <Option value="RELIGION">RELIGION</Option>
+                    <Option value="RESEARCH">RESEARCH</Option>
+                    <Option value="RESOURCES">RESOURCES</Option>
+                    <Option value="SEARCH ENGINE">SEARCH ENGINE</Option>
+                    <Option value="TRAVEL">TRAVEL</Option>
+                  </OptGroup>
+
+                </Select> */}
               </div>
               <input
                 disabled

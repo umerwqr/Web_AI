@@ -1,12 +1,12 @@
 import Link from 'next/link'
 import React, { useState } from 'react'
 import { useRouter } from "next/navigation";
-import { collection, addDoc } from 'firebase/firestore';
 import { db } from '@/config/firebase';
 import { auth } from '@/config/firebase/';
 import { message } from "antd"
-import { doc, setDoc } from "firebase/firestore";
 import { serverTimestamp } from 'firebase/firestore'; // Added this import
+import { collection, addDoc } from 'firebase/firestore';
+import { doc, setDoc } from "firebase/firestore";
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import Loader from '../Loader';
 import { EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";

@@ -25,13 +25,10 @@ const Hero = ({ onSearch, CategoryFilter }) => {
 
     }
     const handleButtonClick = (index) => {
-        setSelected(index);
+      
 
-        // Reset the category state when a button other than filter is clicked
-        if (index !== -1) {
-            setCategory('');
-            CategoryFilter('')
-        }
+
+      
     };
 
     const toggleDropdown = () => {
@@ -140,6 +137,9 @@ const Hero = ({ onSearch, CategoryFilter }) => {
                                                     <button onClick={() => { toggleDropdown(); handleCategoryFilter("Business") }} className="dark:text-white text-[14px] font-[500] hover:dark:text-[#2CD880] hover:text-[#2CD880] transition-all duration-200 ease-in">
                                                         Business
                                                     </button>
+                                                    <button onClick={() => { toggleDropdown(); handleCategoryFilter("Others") }} className="dark:text-white text-[14px] font-[500] hover:dark:text-[#2CD880] hover:text-[#2CD880] transition-all duration-200 ease-in">
+                                                        Business
+                                                    </button>
                                                 </div>
                                             </div>
                                         )}
@@ -148,36 +148,36 @@ const Hero = ({ onSearch, CategoryFilter }) => {
                                 <div className=' bg-gradient-to-br from-[#27B6D7] via-[#526bc454] to-[#15CADF54] bg-opacity-50 rounded-md mx-auto p-[1px]'>
                                     <button
                                         className={`dark:bg-primary-dark bg-white flex justify-center items-center gap-3 px-4 h-[50px] rounded-md ${selected === 0 ? "border-none bg-gradient-to-r from-blue-400 via-green-500 to-blue-500" : ""}`}
-                                        onClick={() => handleButtonClick(0)}
+                                        onClick={() => { handleCategoryFilter("COPYWRITING")}}
                                     >
-                                        Content Writing
+                                        COPYWRITING
                                     </button>
                                 </div>
                                 <div className=' bg-gradient-to-br from-[#27B6D7] via-[#526bc454] to-[#15CADF54] bg-opacity-50 rounded-md mx-auto p-[1px]'>
                                     <button className={`dark:bg-primary-dark bg-white flex justify-center items-center gap-3 px-4 h-[50px] rounded-md ${selected === 1 ? "border-none bg-gradient-to-r from-blue-400 via-green-500 to-blue-500" : ""
                                         }`}
-                                        onClick={() => handleButtonClick(1)}>
-                                        Avatar
+                                        onClick={() => { handleCategoryFilter("AVATARS")}}>
+                                        AVATARS
                                     </button>
                                 </div>
                                 <div className=' bg-gradient-to-br from-[#27B6D7] via-[#526bc454] to-[#15CADF54] bg-opacity-50 rounded-md mx-auto p-[1px]'>
                                     <button className={`dark:bg-primary-dark bg-white flex justify-center items-center gap-3 px-4 h-[50px] rounded-md ${selected === 2 ? "border-none bg-gradient-to-r from-blue-400 via-green-500 to-blue-500" : ""
                                         }`}
-                                        onClick={() => handleButtonClick(2)}>
-                                        Code Generator
+                                        onClick={() => { handleCategoryFilter("CODE ASSISTANT")}}>
+                                        CODE ASSISTANT
                                     </button>
                                 </div>
                                 <div className=' bg-gradient-to-br from-[#27B6D7] via-[#526bc454] to-[#15CADF54] bg-opacity-50 rounded-md mx-auto p-[1px]'>
                                     <button className={`dark:bg-primary-dark bg-white flex justify-center items-center gap-3 px-4 h-[50px] rounded-md ${selected === 3 ? "border-none bg-gradient-to-r from-blue-400 via-green-500 to-blue-500" : ""
                                         }`}
-                                        onClick={() => handleButtonClick(3)}>
+                                        onClick={() => {handleCategoryFilter("3D")}}>
                                         3D
                                     </button>
                                 </div>
                             </div>
                             <div className='mt-5 flex justify-around items-center gap-4 md:gap-16'>
 
-                                <Link href={''} className='flex justify-center items-center gap-3'>
+                                <Link href={'/discover'} className='flex justify-center items-center gap-3'>
                                     <p>
                                         View All Categories
                                     </p>

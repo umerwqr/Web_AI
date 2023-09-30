@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { BiSolidLock } from "react-icons/bi";
 import { db } from "@/config/firebase";
 import Link from "next/link";
+import cookie from "js-cookie"
 import { collection, getDocs } from 'firebase/firestore';
 import Loader from "../Loader";
 const TopAiTools = ({ searchTerm, Category }) => {
@@ -17,8 +18,11 @@ const TopAiTools = ({ searchTerm, Category }) => {
 
     const filteredTools = tools && tools.filter(item => {
         if (Category) {
-            return item.category.toLowerCase() === Category.toLowerCase() && item.title.toLowerCase().includes(searchTerm.toLowerCase());
-        } else {
+            return (
+                item.category.toLowerCase() === Category.toLowerCase() &&
+                item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                item.subCategory.toLowerCase().includes(Category.toLowerCase())
+              );        } else {
             return item.title.toLowerCase().includes(searchTerm.toLowerCase());
         }
     });
@@ -52,15 +56,15 @@ const TopAiTools = ({ searchTerm, Category }) => {
         };
         fetchUsers();
     }, []);
-    
+
     const [showMore, setShowMore] = useState(false);
     const maxToolsToShow = 4;
 
-   
+
     const handleMoreClick = () => {
         setShowMore(!showMore);
     };
-   
+
 
 
 
@@ -118,11 +122,11 @@ const TopAiTools = ({ searchTerm, Category }) => {
                                             ))}
 
                                         </div>
-                                        {!showMore && TrendingTools.length > maxToolsToShow ?(
+                                        {!showMore && TrendingTools.length > maxToolsToShow ? (
                                             <button onClick={handleMoreClick} className="mt-1 bg-blue-500 text-white px-4 py-1 rounded-md">
                                                 More
                                             </button>
-                                        ):TrendingTools.length > maxToolsToShow && (
+                                        ) : TrendingTools.length > maxToolsToShow && (
                                             <button onClick={handleMoreClick} className="mt-1 bg-blue-500 text-white px-4 py-1 rounded-md">
                                                 Less
                                             </button>
@@ -137,7 +141,7 @@ const TopAiTools = ({ searchTerm, Category }) => {
 
                                     return (
                                         <div
-                                            onClick={() => router.push({ pathname: `discover-dynamic`, query: { subject: JSON.stringify(item && item) } })}
+                                            onClick={() =>{cookie.set("tool", JSON.stringify(item&&item)); router.push({ pathname: `discover-dynamic`, query: { subject: JSON.stringify(item && item) } }) }}
                                             key={index}
                                             className="z-[2] cursor-pointer w-[330px] md:w-[350px] bg-gradient-to-br from-[#27B6D7] via-[#07174F54] to-[#27B6D7] bg-opacity-50 rounded-md mx-auto p-[1px]  "
                                         >
@@ -197,7 +201,7 @@ const TopAiTools = ({ searchTerm, Category }) => {
                                                         (120 Reviews)
                                                     </p>
                                                 </div>
-                                                <div>
+                                                <div className="h-[80px]">
                                                     <p className="text-left pl-5 text-[14px] font-[400]">
                                                         {truncateText(item.detail, 30)}
                                                     </p>
@@ -214,8 +218,8 @@ const TopAiTools = ({ searchTerm, Category }) => {
                                                     <p>#besttool</p>
                                                 </div>
                                                 <div className="flex gap-4 mx-5  items-center mt-3 mb-3">
-                                                  
-                                                   
+
+
                                                     <button className="w-full flex items-center px-10 py-2 justify-center gap-3 text-white dark:text-white rounded-md  bg-gradient-to-r from-blue-400 via-green-500 to-blue-500">
                                                         Visit Website
                                                         <svg
@@ -231,7 +235,7 @@ const TopAiTools = ({ searchTerm, Category }) => {
                                                             />
                                                         </svg>
                                                     </button>
-                                              
+
                                                 </div>
                                             </div>
                                         </div>

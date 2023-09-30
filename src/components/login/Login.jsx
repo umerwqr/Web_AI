@@ -16,14 +16,14 @@ const Login = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(true)
     function startTimer() {
-        setTimeout(function() {
-          console.log("Timer is done!");
-          setLoading(false)
+        setTimeout(function () {
+            console.log("Timer is done!");
+            setLoading(false)
         }, 1000); // 3000 milliseconds = 3 seconds
-      }
-      
-      // Start the timer
-      startTimer();
+    }
+
+    // Start the timer
+    startTimer();
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
     };

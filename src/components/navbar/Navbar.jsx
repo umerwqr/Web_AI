@@ -122,7 +122,7 @@ const Navbar = () => {
 
 
             {/* start a project  */}
-            <button onClick={() => router.push("/stripe")} className="font-[500] text-[18px] z-20  w-[180px] h-[50px] text-white dark:text-white rounded-md  bg-gradient-to-r from-blue-400 via-green-500 to-blue-500">
+            <button onClick={() => router.push("/submit-tool")} className="font-[500] text-[18px] z-20  w-[180px] h-[50px] text-white dark:text-white rounded-md  bg-gradient-to-r from-blue-400 via-green-500 to-blue-500">
               Submit a tool
             </button>
           </div>

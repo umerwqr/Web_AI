@@ -1,11 +1,38 @@
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { IoFilter } from "react-icons/io5";
 import { AiOutlineSearch } from "react-icons/ai";
 import { useRouter } from "next/navigation";
+import { db } from "@/config/firebase";
+import { collection, getDocs, where, query } from 'firebase/firestore';
+import Loader from "../Loader";
+import cookie from "js-cookie"
 
 const Discover = () => {
     const router = useRouter();
+
+    const [tools, setTool] = useState(null)
+    const [loading, setLoading] = useState(false)
+    useEffect(() => {
+        const fetchUsers = async () => {
+            setLoading(true)
+            console.log("helloo")
+            try {
+                const querySnapshot = await getDocs(collection(db, "tools"));
+                const toolList = querySnapshot.docs.map((doc) => ({
+                    id: doc.id,
+                    ...doc.data(),
+                }));
+                setTool(toolList);
+                setLoading(false)
+            } catch (error) {
+                console.error('Error fetching users:', error, " error end");
+            }
+        };
+        fetchUsers();
+    }, []);
+    console.log("tools are following:", tools && tools)
+
     const data = [
         {
             id: 1,
@@ -98,26 +125,26 @@ const Discover = () => {
                                     className="absolute top-[100%] w-full py-5 z-10 left-0 mt-2 px-2 backdrop-blur-lg   rounded-[6px] shadow"
                                     style={{ background: "rgba(181, 212, 255, 0.14)" }}
                                 >
-                                     <div className="flex flex-col justify-start items-start px-3 gap-3 ">
-                                                    <button onClick={toggleDropdown} className="dark:text-white text-[14px] font-[500] hover:dark:text-[#2CD880] hover:text-[#2CD880] transition-all duration-200 ease-in">
-                                                        Text
-                                                    </button>
-                                                    <button onClick={toggleDropdown} className="dark:text-white text-[14px] font-[500] hover:dark:text-[#2CD880]  hover:text-[#2CD880] transition-all duration-200 ease-in">
-                                                        Image
-                                                    </button>
-                                                    <button onClick={toggleDropdown} className="dark:text-white text-[14px] font-[500] hover:dark:text-[#2CD880] hover:text-[#2CD880] transition-all duration-200 ease-in">
-                                                        Code
-                                                    </button>
-                                                    <button onClick={toggleDropdown} className="dark:text-white text-[14px] font-[500] hover:dark:text-[#2CD880] hover:text-[#2CD880] transition-all duration-200 ease-in">
-                                                        Video
-                                                    </button>
-                                                    <button onClick={toggleDropdown} className="dark:text-white text-[14px] font-[500] hover:dark:text-[#2CD880] hover:text-[#2CD880] transition-all duration-200 ease-in">
-                                                        Audio
-                                                    </button>
-                                                    <button onClick={toggleDropdown} className="dark:text-white text-[14px] font-[500] hover:dark:text-[#2CD880] hover:text-[#2CD880] transition-all duration-200 ease-in">
-                                                        Business
-                                                    </button>
-                                                </div>
+                                    <div className="flex flex-col justify-start items-start px-3 gap-3 ">
+                                        <button onClick={toggleDropdown} className="dark:text-white text-[14px] font-[500] hover:dark:text-[#2CD880] hover:text-[#2CD880] transition-all duration-200 ease-in">
+                                            Text
+                                        </button>
+                                        <button onClick={toggleDropdown} className="dark:text-white text-[14px] font-[500] hover:dark:text-[#2CD880]  hover:text-[#2CD880] transition-all duration-200 ease-in">
+                                            Image
+                                        </button>
+                                        <button onClick={toggleDropdown} className="dark:text-white text-[14px] font-[500] hover:dark:text-[#2CD880] hover:text-[#2CD880] transition-all duration-200 ease-in">
+                                            Code
+                                        </button>
+                                        <button onClick={toggleDropdown} className="dark:text-white text-[14px] font-[500] hover:dark:text-[#2CD880] hover:text-[#2CD880] transition-all duration-200 ease-in">
+                                            Video
+                                        </button>
+                                        <button onClick={toggleDropdown} className="dark:text-white text-[14px] font-[500] hover:dark:text-[#2CD880] hover:text-[#2CD880] transition-all duration-200 ease-in">
+                                            Audio
+                                        </button>
+                                        <button onClick={toggleDropdown} className="dark:text-white text-[14px] font-[500] hover:dark:text-[#2CD880] hover:text-[#2CD880] transition-all duration-200 ease-in">
+                                            Business
+                                        </button>
+                                    </div>
                                 </div>
                             )}
                         </div>
@@ -125,32 +152,264 @@ const Discover = () => {
                 </div>
                 <div className="absolute left-0 bg-[#2CD7834F]/10 w-[338px] h-[338px] rounded-full blur-3xl"></div>
                 <div className="absolute r bg-[#2CD7834F]/10 w-[300px] h-[338px] right-0 rounded-full blur-3xl"></div>
-                <div className="flex justify-center items-center my-16">
+                <div className="flex flex-col justify-center items-center my-16">
+                    <h1 className=" font-bold my-3 text-3xl">
+                        TEXT
+                    </h1>
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-y-6 gap-x-4">
-                        {data.map((item, index) => (
-                            <div
-                                key={index}
-                                className="w-[287px] h-[206px] bg-gradient-to-br from-[#15CADF] via-[#13287254] to-[#15CADF] bg-opacity-50 rounded-md mx-auto p-[1px]  "
-                            >
-                                <div className="w-full p-1 backdrop-blur-2xl bg-white dark:bg-primary-dark/90 h-full rounded-md">
-                                    <div className="flex flex-col justify-center items-center py-10  gap-3">
-                                        <div className="w-[60px] h-[60px] rounded-full flex justify-center items-center bg-primary-dark/80 dark:bg-[#2CD88021]">
-                                            <Image
-                                                src={item.img}
-                                                alt=""
-                                                width={512}
-                                                height={512}
-                                                className=" h-[30px] w-[30px]"
-                                            />
+
+                        {tools?.map((item, index) => (
+                            // Check if the subCategory is equal to "TEXT"
+                            item.category === "Text" && (
+                                <div
+                                    key={index}
+                                    className="w-[287px] h-[206px] bg-gradient-to-br from-[#15CADF] via-[#13287254] to-[#15CADF] bg-opacity-50 rounded-md mx-auto p-[1px]"
+                                >
+                                    <div className="w-full p-1 backdrop-blur-2xl bg-white dark:bg-primary-dark/90 h-full rounded-md">
+                                        <div className="flex flex-col justify-center items-center py-10 gap-3">
+                                            <div className="w-[60px] h-[60px] rounded-full flex justify-center items-center bg-primary-dark/80 dark:bg-[#2CD88021]">
+                                                <Image
+                                                    src={data[1].img}
+                                                    alt=""
+                                                    width={512}
+                                                    height={512}
+                                                    className="h-[30px] w-[30px]"
+                                                />
+                                            </div>
+                                            <h1 className="text-[24px] font-[600]">{item.subCategory}</h1>
+                                            <p className="text-[16px] font-[400]">{item.tools}</p>
                                         </div>
-                                        <h1 className="text-[24px] font-[600] ">{item.title}</h1>
-                                        <p className="text-[16px] font-[400]">{item.tools}</p>
                                     </div>
                                 </div>
-                            </div>
+                            )
+                        ))}
+
+                    </div>
+                    <h1 className=" font-bold my-3 text-3xl">
+                        IMAGE
+                    </h1>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-y-6 gap-x-4">
+
+
+                        {tools?.map((item, index) => (
+                            // Check if the subCategory is equal to "TEXT"
+                            item.category === "Image" && (
+                                <div
+                                    key={index}
+                                    className="w-[287px] h-[206px] bg-gradient-to-br from-[#15CADF] via-[#13287254] to-[#15CADF] bg-opacity-50 rounded-md mx-auto p-[1px]"
+                                >
+                                    <div className="w-full p-1 backdrop-blur-2xl bg-white dark:bg-primary-dark/90 h-full rounded-md">
+                                        <div className="flex flex-col justify-center items-center py-10 gap-3">
+                                            <div className="w-[60px] h-[60px] rounded-full flex justify-center items-center bg-primary-dark/80 dark:bg-[#2CD88021]">
+                                                <Image
+                                                    src={data[1].img}
+                                                    alt=""
+                                                    width={512}
+                                                    height={512}
+                                                    className="h-[30px] w-[30px]"
+                                                />
+                                            </div>
+                                            <h1 className="text-[24px] font-[600]">{item.subCategory}</h1>
+                                            <p className="text-[16px] font-[400]">{item.tools}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            )
+                        ))}
+                    </div>
+                    <h1 className=" font-bold my-3 text-3xl">
+                        CODE
+                    </h1>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-y-6 gap-x-4">
+
+
+                        {tools?.map((item, index) => (
+                            // Check if the subCategory is equal to "TEXT"
+                            item.category === "Code" && (
+                                <div
+                                    key={index}
+                                    className="w-[287px] h-[206px] bg-gradient-to-br from-[#15CADF] via-[#13287254] to-[#15CADF] bg-opacity-50 rounded-md mx-auto p-[1px]"
+                                >
+                                    <div className="w-full p-1 backdrop-blur-2xl bg-white dark:bg-primary-dark/90 h-full rounded-md">
+                                        <div className="flex flex-col justify-center items-center py-10 gap-3">
+                                            <div className="w-[60px] h-[60px] rounded-full flex justify-center items-center bg-primary-dark/80 dark:bg-[#2CD88021]">
+                                                <Image
+                                                    src={data[1].img}
+                                                    alt=""
+                                                    width={512}
+                                                    height={512}
+                                                    className="h-[30px] w-[30px]"
+                                                />
+                                            </div>
+                                            <h1 className="text-[24px] font-[600]">{item.subCategory}</h1>
+                                            <p className="text-[16px] font-[400]">{item.tools}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            )
+                        ))}
+                    </div>
+                    <h1 className=" font-bold my-3 text-3xl">
+                        AUDIO
+                    </h1>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-y-6 gap-x-4">
+
+
+                        {tools?.map((item, index) => (
+                            // Check if the subCategory is equal to "TEXT"
+                            item.category === "Audio" && (
+                                <div
+                                    key={index}
+                                    className="w-[287px] h-[206px] bg-gradient-to-br from-[#15CADF] via-[#13287254] to-[#15CADF] bg-opacity-50 rounded-md mx-auto p-[1px]"
+                                >
+                                    <div className="w-full p-1 backdrop-blur-2xl bg-white dark:bg-primary-dark/90 h-full rounded-md">
+                                        <div className="flex flex-col justify-center items-center py-10 gap-3">
+                                            <div className="w-[60px] h-[60px] rounded-full flex justify-center items-center bg-primary-dark/80 dark:bg-[#2CD88021]">
+                                                <Image
+                                                    src={data[1].img}
+                                                    alt=""
+                                                    width={512}
+                                                    height={512}
+                                                    className="h-[30px] w-[30px]"
+                                                />
+                                            </div>
+                                            <h1 className="text-[24px] font-[600]">{item.subCategory}</h1>
+                                            <p className="text-[16px] font-[400]">{item.tools}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            )
+                        ))}
+                    </div>
+                    <h1 className=" font-bold my-3 text-3xl">
+                        VIDEO
+                    </h1>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-y-6 gap-x-4">
+
+
+                        {tools?.map((item, index) => (
+                            // Check if the subCategory is equal to "TEXT"
+                            item.category === "Video" && (
+                                <div
+                                    key={index}
+                                    className="w-[287px] h-[206px] bg-gradient-to-br from-[#15CADF] via-[#13287254] to-[#15CADF] bg-opacity-50 rounded-md mx-auto p-[1px]"
+                                >
+                                    <div className="w-full p-1 backdrop-blur-2xl bg-white dark:bg-primary-dark/90 h-full rounded-md">
+                                        <div className="flex flex-col justify-center items-center py-10 gap-3">
+                                            <div className="w-[60px] h-[60px] rounded-full flex justify-center items-center bg-primary-dark/80 dark:bg-[#2CD88021]">
+                                                <Image
+                                                    src={data[1].img}
+                                                    alt=""
+                                                    width={512}
+                                                    height={512}
+                                                    className="h-[30px] w-[30px]"
+                                                />
+                                            </div>
+                                            <h1 className="text-[24px] font-[600]">{item.subCategory}</h1>
+                                            <p className="text-[16px] font-[400]">{item.tools}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            )
+                        ))}
+                    </div>
+                    <h1 className=" font-bold my-3 text-3xl">
+                        3D
+                    </h1>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-y-6 gap-x-4">
+
+
+                        {tools?.map((item, index) => (
+                            // Check if the subCategory is equal to "TEXT"
+                            item.category === "3D" && (
+                                <div
+                                    key={index}
+                                    className="w-[287px] h-[206px] bg-gradient-to-br from-[#15CADF] via-[#13287254] to-[#15CADF] bg-opacity-50 rounded-md mx-auto p-[1px]"
+                                >
+                                    <div className="w-full p-1 backdrop-blur-2xl bg-white dark:bg-primary-dark/90 h-full rounded-md">
+                                        <div className="flex flex-col justify-center items-center py-10 gap-3">
+                                            <div className="w-[60px] h-[60px] rounded-full flex justify-center items-center bg-primary-dark/80 dark:bg-[#2CD88021]">
+                                                <Image
+                                                    src={data[1].img}
+                                                    alt=""
+                                                    width={512}
+                                                    height={512}
+                                                    className="h-[30px] w-[30px]"
+                                                />
+                                            </div>
+                                            <h1 className="text-[24px] font-[600]">{item.subCategory}</h1>
+                                            <p className="text-[16px] font-[400]">{item.tools}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            )
+                        ))}
+                    </div>
+                    <h1 className=" font-bold my-3 text-3xl">
+                        BUSINESS
+                    </h1>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-y-6 gap-x-4">
+
+                        {tools?.map((item, index) => (
+                            // Check if the subCategory is equal to "TEXT"
+                            item.category === "Text" && (
+                                <div
+                                    key={index}
+                                    className="w-[287px] h-[206px] bg-gradient-to-br from-[#15CADF] via-[#13287254] to-[#15CADF] bg-opacity-50 rounded-md mx-auto p-[1px]"
+                                >
+                                    <div className="w-full p-1 backdrop-blur-2xl bg-white dark:bg-primary-dark/90 h-full rounded-md">
+                                        <div className="flex flex-col justify-center items-center py-10 gap-3">
+                                            <div className="w-[60px] h-[60px] rounded-full flex justify-center items-center bg-primary-dark/80 dark:bg-[#2CD88021]">
+                                                <Image
+                                                    src={data[1].img}
+                                                    alt=""
+                                                    width={512}
+                                                    height={512}
+                                                    className="h-[30px] w-[30px]"
+                                                />
+                                            </div>
+                                            <h1 className="text-[24px] font-[600]">{item.subCategory}</h1>
+                                            <p className="text-[16px] font-[400]">{item.tools}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            )
+                        ))}
+                    </div>
+                    <h1 className=" font-bold my-3 text-3xl">
+                        OTHERS
+                    </h1>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-y-6 gap-x-4">
+
+
+                        {tools?.map((item, index) => (
+                            // Check if the subCategory is equal to "TEXT"
+                            item.category === "Others" && (
+                                <div
+                                    key={index}
+                                    className="w-[287px] h-[206px] bg-gradient-to-br from-[#15CADF] via-[#13287254] to-[#15CADF] bg-opacity-50 rounded-md mx-auto p-[1px]"
+                                >
+                                    <div className="w-full p-1 backdrop-blur-2xl bg-white dark:bg-primary-dark/90 h-full rounded-md">
+                                        <div className="flex flex-col justify-center items-center py-10 gap-3">
+                                            <div className="w-[60px] h-[60px] rounded-full flex justify-center items-center bg-primary-dark/80 dark:bg-[#2CD88021]">
+                                                <Image
+                                                    src={data[1].img}
+                                                    alt=""
+                                                    width={512}
+                                                    height={512}
+                                                    className="h-[30px] w-[30px]"
+                                                />
+                                            </div>
+                                            <h1 className="text-[24px] font-[600]">{item.subCategory}</h1>
+                                            <p className="text-[16px] font-[400]">{item.tools}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            )
                         ))}
                     </div>
                 </div>
+
             </div>
         </div>
     );

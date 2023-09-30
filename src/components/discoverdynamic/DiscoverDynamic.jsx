@@ -7,6 +7,8 @@ import cookie from "js-cookie"
 import { BiSolidLock } from "react-icons/bi";
 import { db } from "@/config/firebase";
 import Loader2 from "../Loader2";
+import Loader from "../Loader";
+import { serverTimestamp } from 'firebase/firestore'; // Added this import
 import { addDoc, setDoc, onSnapshot, getDocs, query, where, deleteDoc, docs, collection } from 'firebase/firestore';
 
 
@@ -22,48 +24,60 @@ import { message } from "antd";
 
 const DiscoverDynamic = ({ object }) => {
 
+  const toolCookie=cookie.get("tool")
+
+  const [toolObject, setToolObject] = useState(null)
+
+  useEffect(() => {
+    if (toolCookie) {
+      setToolObject(JSON.parse(toolCookie))
+    } 
+  }, [toolCookie]);
+
   const router = useRouter();
   const [selected, setSelected] = useState(false);
-
+  
   var userCookie = cookie.get('user');
   const [userObject, setUserObject] = useState(null)
-  const [loading,setLoading]=useState(false)
+  const [loading, setLoading] = useState(false)
   useEffect(() => {
     if (userCookie) {
       setUserObject(JSON.parse(userCookie))
 
     }
   }, [userCookie]);
+console.log("user Object:",userObject?.uid)
+console.log("tool Object:",toolObject?.TId)
 
-
+  const [rating, setRating] = useState(0);
   const [tools, setTool] = useState(null)
- console.log("teeeeooooooools::",tools)
+  console.log("teeeeooooooools::", tools)
 
   useEffect(() => {
     const fetchUsers = async () => {
-        console.log("helloo")
-        try {
-            const querySnapshot = await getDocs(collection(db, "tools"));
-            const toolList = querySnapshot.docs.map((doc) => ({
-                id: doc.id,
-                ...doc.data(),
-            }));
-            setTool(toolList);
-        } catch (error) {
-            console.error('Error fetching users:', error, " error end");
-        }
+      console.log("helloo")
+      try {
+        const querySnapshot = await getDocs(collection(db, "tools"));
+        const toolList = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setTool(toolList);
+      } catch (error) {
+        console.error('Error fetching users:', error, " error end");
+      }
     };
     fetchUsers();
-}, []);
+  }, []);
 
 
 
   // Check if tools is not null to avoid errors
- 
-    const featuredTools = tools&&tools.filter(tool => tool.mode === 'Featured');
-    console.log("Featured Tools:", featuredTools);
-  
-  const [check2,setCheck2]=useState(false)
+
+  const featuredTools = tools && tools.filter(tool => tool.mode === 'Featured');
+  console.log("Featured Tools:", featuredTools);
+
+  const [check2, setCheck2] = useState(false)
   var saves = [];
   const [SaveLength, setSaveLength] = useState(0)
   console.log(saves)
@@ -75,7 +89,7 @@ const DiscoverDynamic = ({ object }) => {
           where('toolId', '==', object[0].TId),
           where('userId', '==', userObject?.uid)
         ));
-    
+
         if (!querySnapshot.empty) {
           console.log('Document exists');
           setCheck2(true)
@@ -99,10 +113,10 @@ const DiscoverDynamic = ({ object }) => {
         console.error("Error fetching tool saves:", error);
       }
     }
-  
+
     getToolSaves();
-  
-  }, [selected,check2]);
+
+  }, [selected, check2]);
 
   const handleSaveTool = async () => {
     setLoading(true)
@@ -137,7 +151,7 @@ const DiscoverDynamic = ({ object }) => {
     }
   };
 
-
+ 
 
 
   const dateCorrector = (seconds) => {
@@ -181,13 +195,40 @@ const DiscoverDynamic = ({ object }) => {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
-  const handleSubmitReview = (event) => {
+  const [review,setReview]=useState("")
+  const handleSubmitReview = async(event) => {
     event.preventDefault();
-    // Handle the review submission logic here
-    // You can also close the dropdown after submission if needed
+    console.log(review)
+    console.log(rating)
+    try{
+      if(userObject){
+
+      const Tool = await addDoc(collection(db, 'reviews'), {
+        review:review,
+        rating:rating,
+        Tid:toolObject?.TId,
+        Uid:userObject?.uid,
+        imageUrl:toolObject?.imageUrl,
+        name:userObject?.displayName,
+        joiningDate: serverTimestamp(),
+      })
+      message.success("Review Added successfully")
+    }
+    else{
+      message.error("Sorry, Kindly Login first")
+    }
+
+
+
+    }catch(err){
+      message.error("Error,Review not Added")
+      console.log(err)
+
+    }
+
+   
     setIsDropdownOpen(false);
   };
-  const [rating, setRating] = useState(0);
 
   const handleStarClick = (selectedRating) => {
     setRating(selectedRating);
@@ -200,7 +241,7 @@ const DiscoverDynamic = ({ object }) => {
       <div className="flex md:flex-row flex-col justify-center  gap-8">
         <div className="flex basis-[100%] md:basis-[50%]">
           <Image
-            src={object[0] && object[0].imageUrl}
+            src={toolObject?.imageUrl}
             alt=""
             width={1080}
             height={1080}
@@ -211,7 +252,7 @@ const DiscoverDynamic = ({ object }) => {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-[24px] md:text-[40px] font-[700] tracking-wide">
-                {object[0] && object[0].title}
+                {toolObject?.title}
               </h1>
             </div>
             <div className="flex gap-5 md:gap-10 items-center relative">
@@ -229,7 +270,7 @@ const DiscoverDynamic = ({ object }) => {
           </div>
           <div className="flex items-center gap-5">
             <BsFillCalendarFill size={20} className="text-slate-400" />
-            <p className="text-[16px] font-[400]">{dateCorrector(object[0] && object[0].joiningDate.seconds)}</p>
+            <p className="text-[16px] font-[400]">{dateCorrector(toolObject?.joiningDate.seconds)}</p>
           </div>
           <div className="flex gap-3">
             <div className='flex  py-2 gap-2'>
@@ -248,7 +289,7 @@ const DiscoverDynamic = ({ object }) => {
           </div>
           <div className="py-5">
             <p className="text-[18px] font-[500]">
-              {object[0] && object[0].detail}
+              {toolObject?.detail}
             </p>
           </div>
           <div className=" md:max-w-[120px] bg-gradient-to-br from-[#27B6D7] via-[#07174F54] to-[#27B6D7] bg-opacity-50 rounded-md p-[1px] ">
@@ -258,34 +299,36 @@ const DiscoverDynamic = ({ object }) => {
             </button>
           </div>
           <div className="flex gap-10 md:gap-4  items-center mt-3 mb-3 ">
-            <button className="md:w-[400px] flex items-center px-8 md:px-10 py-[9px] justify-center gap-3 text-white dark:text-white rounded-md  bg-gradient-to-r from-blue-400 via-green-500 to-blue-500">
-              Visit Website
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="15"
-                height="13"
-                viewBox="0 0 15 13"
-                fill="none"
-              >
-                <path
-                  d="M15 6.25L8.75 -2.73196e-07L7.86875 0.88125L12.6062 5.625L-2.45877e-07 5.625L-3.00516e-07 6.875L12.6062 6.875L7.86875 11.6187L8.75 12.5L15 6.25Z"
-                  fill="white"
-                />
-              </svg>
-            </button>
-<div>
-            {loading?<><Loader2/></>:<> </>}
-
-            <div
-              onClick={() => handleSaveTool()}
-              className=" bg-gradient-to-br from-[#27B6D7] via-[#07174F54] to-[#27B6D7] bg-opacity-50 rounded-md p-[1.5px]">
-              <button
-                className={` md:w-[200px] px-7 py-[11px] text-white dark:text-white bg-white dark:bg-primary-dark flex justify-center items-center rounded-md ${check2 ? "border-none bg-gradient-to-r from-blue-400 via-green-500 to-blue-500" : ""}`}
-              >
-                <BsBookmarkHeart size={18} className="text-black  dark:text-white" />
+            <a href={toolObject?.link} target="_blank">
+              <button className="md:w-[400px] flex items-center px-8 md:px-10 py-[9px] justify-center gap-3 text-white dark:text-white rounded-md  bg-gradient-to-r from-blue-400 via-green-500 to-blue-500">
+                Visit Website
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="15"
+                  height="13"
+                  viewBox="0 0 15 13"
+                  fill="none"
+                >
+                  <path
+                    d="M15 6.25L8.75 -2.73196e-07L7.86875 0.88125L12.6062 5.625L-2.45877e-07 5.625L-3.00516e-07 6.875L12.6062 6.875L7.86875 11.6187L8.75 12.5L15 6.25Z"
+                    fill="white"
+                  />
+                </svg>
               </button>
+            </a>
+            <div>
+              {loading ? <><Loader/></> : <> </>}
+
+              <div
+                onClick={() => handleSaveTool()}
+                className=" bg-gradient-to-br from-[#27B6D7] via-[#07174F54] to-[#27B6D7] bg-opacity-50 rounded-md p-[1.5px]">
+                <button
+                  className={` md:w-[200px] px-7 py-[11px] text-white dark:text-white bg-white dark:bg-primary-dark flex justify-center items-center rounded-md ${check2 ? "border-none bg-gradient-to-r from-blue-400 via-green-500 to-blue-500" : ""}`}
+                >
+                  <BsBookmarkHeart size={18} className="text-black  dark:text-white" />
+                </button>
+              </div>
             </div>
-</div>
           </div>
           <div className="bg-gradient-to-br from-[#27B6D7] via-[#07174F54] to-[#27B6D7] bg-opacity-50 rounded-md p-[1.5px]">
             <Link href={'/review'}>
@@ -405,6 +448,9 @@ const DiscoverDynamic = ({ object }) => {
               <input
                 className=" dark:placeholder-[#FFFFFF]  focus:outline-none text-[13px] md:text-[16px] pl-3 md:pl-5 w-full py-3 md:py-5  bg-custom-blue border rounded-md dark:border-primary-border border-primary-dark"
                 placeholder="Write your review..."
+                value={review}
+                onChange={(e)=>setReview(e.target.value)}
+                
               />
               <div className="star-rating">
                 {[1, 2, 3, 4, 5].map((star) => (
@@ -417,7 +463,10 @@ const DiscoverDynamic = ({ object }) => {
                   </span>
                 ))}
               </div>
-              <button type="submit" className="font-[500] text-[18px] z-20  w-[180px] h-[50px] text-white dark:text-white rounded-md  bg-gradient-to-r from-blue-400 via-green-500 to-blue-500">
+              <button
+               type="submit" 
+               onClick={handleSubmitReview}
+               className="font-[500] text-[18px] z-20  w-[180px] h-[50px] text-white dark:text-white rounded-md  bg-gradient-to-r from-blue-400 via-green-500 to-blue-500">
                 Submit
               </button>
             </form>
@@ -430,7 +479,7 @@ const DiscoverDynamic = ({ object }) => {
           Featured AI Tools
         </h1>
         <div className='grid grid-cols-1 md:grid-cols-3 gap-5 mt-10'>
-          {featuredTools&&featuredTools.map((item, index) => (
+          {featuredTools && featuredTools.map((item, index) => (
             <div onClick={() => router.push("/discover-dynamic")} key={index} className='cursor-pointer w-[320px] md:w-[400px] bg-gradient-to-br from-[#27B6D7] via-[#07174F54] to-[#27B6D7] bg-opacity-50 rounded-md mx-auto p-[1px]  '>
               <div className='w-full p-1 backdrop-blur-2xl bg-white dark:bg-primary-dark/90 h-full rounded-md'>
                 <Image src={item.imageUrl} width={347} height={263} alt='' className='w-[300px] h-[220px] md:w-[360px] md:h-[220px] rounded-[10px] mx-auto  my-3 object-cover' />

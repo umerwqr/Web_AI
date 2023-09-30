@@ -87,22 +87,24 @@ const Footer = () => {
                             </p>
                             <div className="flex my-5 ml-[-3rem] md:ml-0 ">
                                 <div className="bg-gradient-to-br from-[#27B6D7] via-[#07174F54] to-[#27B6D7] bg-opacity-50 rounded-md mx-auto p-[1px]">
-                                    <div className="relative  rounded-md flex-grow w-full md:w-[300px] bg-white dark:bg-gradient-to-r from-[#112B59] to-[#07174F]">
+                                    <div className="relative rounded-md flex-grow w-full md:w-[300px] bg-white dark:bg-gradient-to-r from-[#112B59] to-[#07174F]">
                                         <input
                                             type="text"
                                             placeholder="Email Address"
-                                            className="md:w-[300px] w-[250px] focus:outline-none px-5 h-[50px] bg-transparent rounded-md"
+                                            className="md:w-full w-full focus:outline-none px-5 pr-10 h-[50px] bg-transparent rounded-md"
                                         />
-                                        <button
-                                            type="button"
-                                            className="absolute top-[10px] right-3 bottom-0  bg-primary-blue text-white h-[30px] px-2 md:px-4 py-1 rounded-md"
-                                        >
-                                            Subscribe
-                                        </button>
+
                                     </div>
 
                                 </div>
+
                             </div>
+                            <button
+                                type="button"
+                                className=" w-[100%] h-10 my-2 transform translate-y-[-50%] right-3 bg-primary-blue text-white h-[30px] px-2 md:px-4 py-1 rounded-md"
+                            >
+                                Subscribe
+                            </button>
 
                         </div>
                     </div>
