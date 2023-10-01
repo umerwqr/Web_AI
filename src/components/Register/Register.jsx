@@ -124,7 +124,7 @@ const Register = () => {
                                        border-primary-dark"  />
                                 <span
                                     onClick={togglePasswordVisibility}
-                                    className="absolute right-4 top-4 cursor-pointer"
+                                    className="absolute right-4 top-[17px] cursor-pointer"
                                 >
                                     {showPassword ? <EyeInvisibleOutlined /> : <EyeOutlined />}
                                 </span>

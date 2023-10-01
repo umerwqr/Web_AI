@@ -22,7 +22,8 @@ const TopAiTools = ({ searchTerm, Category }) => {
                 item.category.toLowerCase() === Category.toLowerCase() &&
                 item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 item.subCategory.toLowerCase().includes(Category.toLowerCase())
-              );        } else {
+            );
+        } else {
             return item.title.toLowerCase().includes(searchTerm.toLowerCase());
         }
     });
@@ -38,6 +39,7 @@ const TopAiTools = ({ searchTerm, Category }) => {
         return text;
     }
 
+    
     useEffect(() => {
         const fetchUsers = async () => {
             setLoading(true)
@@ -141,7 +143,7 @@ const TopAiTools = ({ searchTerm, Category }) => {
 
                                     return (
                                         <div
-                                            onClick={() =>{cookie.set("tool", JSON.stringify(item&&item)); router.push({ pathname: `discover-dynamic`, query: { subject: JSON.stringify(item && item) } }) }}
+                                            onClick={() => { cookie.set("tool", JSON.stringify(item && item)); router.push({ pathname: `discover-dynamic`, query: { subject: JSON.stringify(item && item) } }) }}
                                             key={index}
                                             className="z-[2] cursor-pointer w-[330px] md:w-[350px] bg-gradient-to-br from-[#27B6D7] via-[#07174F54] to-[#27B6D7] bg-opacity-50 rounded-md mx-auto p-[1px]  "
                                         >
@@ -168,37 +170,17 @@ const TopAiTools = ({ searchTerm, Category }) => {
                                                         />
                                                     </svg>
                                                 </div>
-                                                <div className="flex px-5 py-2 gap-2">
-                                                    <svg
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                        width="110"
-                                                        height="17"
-                                                        viewBox="0 0 110 17"
-                                                        fill="none"
-                                                    >
-                                                        <path
-                                                            d="M8.55696 13.6975L12.707 16.2075C13.467 16.6675 14.397 15.9875 14.197 15.1275L13.097 10.4075L16.767 7.2275C17.437 6.6475 17.077 5.5475 16.197 5.4775L11.367 5.0675L9.47696 0.6075C9.13696 -0.2025 7.97696 -0.2025 7.63696 0.6075L5.74696 5.0575L0.916957 5.4675C0.0369575 5.5375 -0.323043 6.6375 0.346957 7.2175L4.01696 10.3975L2.91696 15.1175C2.71696 15.9775 3.64696 16.6575 4.40696 16.1975L8.55696 13.6975Z"
-                                                            fill="#E5A206"
-                                                        />
-                                                        <path
-                                                            d="M31.557 13.6975L35.707 16.2075C36.467 16.6675 37.397 15.9875 37.197 15.1275L36.097 10.4075L39.767 7.2275C40.437 6.6475 40.077 5.5475 39.197 5.4775L34.367 5.0675L32.477 0.6075C32.137 -0.2025 30.977 -0.2025 30.637 0.6075L28.747 5.0575L23.917 5.4675C23.037 5.5375 22.677 6.6375 23.347 7.2175L27.017 10.3975L25.917 15.1175C25.717 15.9775 26.647 16.6575 27.407 16.1975L31.557 13.6975Z"
-                                                            fill="#E5A206"
-                                                        />
-                                                        <path
-                                                            d="M54.557 13.6975L58.707 16.2075C59.467 16.6675 60.397 15.9875 60.197 15.1275L59.097 10.4075L62.767 7.2275C63.437 6.6475 63.077 5.5475 62.197 5.4775L57.367 5.0675L55.477 0.6075C55.137 -0.2025 53.977 -0.2025 53.637 0.6075L51.747 5.0575L46.917 5.4675C46.037 5.5375 45.677 6.6375 46.347 7.2175L50.017 10.3975L48.917 15.1175C48.717 15.9775 49.647 16.6575 50.407 16.1975L54.557 13.6975Z"
-                                                            fill="#E5A206"
-                                                        />
-                                                        <path
-                                                            d="M77.557 13.6975L81.707 16.2075C82.467 16.6675 83.397 15.9875 83.197 15.1275L82.097 10.4075L85.767 7.2275C86.437 6.6475 86.077 5.5475 85.197 5.4775L80.367 5.0675L78.477 0.6075C78.137 -0.2025 76.977 -0.2025 76.637 0.6075L74.747 5.0575L69.917 5.4675C69.037 5.5375 68.677 6.6375 69.347 7.2175L73.017 10.3975L71.917 15.1175C71.717 15.9775 72.647 16.6575 73.407 16.1975L77.557 13.6975Z"
-                                                            fill="#E5A206"
-                                                        />
-                                                        <path
-                                                            d="M100.557 13.6975L104.707 16.2075C105.467 16.6675 106.397 15.9875 106.197 15.1275L105.097 10.4075L108.767 7.2275C109.437 6.6475 109.077 5.5475 108.197 5.4775L103.367 5.0675L101.477 0.6075C101.137 -0.2025 99.977 -0.2025 99.637 0.6075L97.747 5.0575L92.917 5.4675C92.037 5.5375 91.677 6.6375 92.347 7.2175L96.017 10.3975L94.917 15.1175C94.717 15.9775 95.647 16.6575 96.407 16.1975L100.557 13.6975Z"
-                                                            fill="#E5A206"
-                                                        />
-                                                    </svg>
+                                                <div className="flex px-5 py-2 gap-2 text-[18px] items-start">
+                                                    {[1, 2, 3, 4, 5].map((star) => (
+                                                        <span
+                                                            key={star}
+                                                            className={`star ${item.rating >= star ? 'filled' : ''}`}
+                                                        >
+                                                            &#9733;
+                                                        </span>
+                                                    ))}
                                                     <p className="text-gray-500 text-[16px] fot-[400]">
-                                                        (120 Reviews)
+                                                        ( {item.reviews} )
                                                     </p>
                                                 </div>
                                                 <div className="h-[80px]">

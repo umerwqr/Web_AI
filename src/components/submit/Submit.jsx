@@ -146,6 +146,7 @@ const Submit = () => {
             payment: 120,
             joiningDate: serverTimestamp(),
           });
+          
         } else {
           // If a document with the same email already exists, you can choose to update it or take some other action
           console.log('User with this email already exists');
@@ -195,6 +196,8 @@ const Submit = () => {
         imageUrl: imageUrl,
         user: userObject?.displayName,
         mode: "Alternate",
+        reviews:0,
+        rating:0,
         joiningDate: serverTimestamp(),
       })
 

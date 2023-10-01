@@ -9,7 +9,7 @@ import { db } from "@/config/firebase";
 import Loader2 from "../Loader2";
 import Loader from "../Loader";
 import { serverTimestamp } from 'firebase/firestore'; // Added this import
-import { addDoc, setDoc, onSnapshot, getDocs, query, where, deleteDoc, docs, collection } from 'firebase/firestore';
+import { addDoc, setDoc, onSnapshot,updateDoc, getDocs, query,doc,getDoc, where, deleteDoc, docs, collection } from 'firebase/firestore';
 
 
 import {
@@ -24,19 +24,19 @@ import { message } from "antd";
 
 const DiscoverDynamic = ({ object }) => {
 
-  const toolCookie=cookie.get("tool")
+  const toolCookie = cookie.get("tool")
 
   const [toolObject, setToolObject] = useState(null)
 
   useEffect(() => {
     if (toolCookie) {
       setToolObject(JSON.parse(toolCookie))
-    } 
+    }
   }, [toolCookie]);
 
   const router = useRouter();
   const [selected, setSelected] = useState(false);
-  
+
   var userCookie = cookie.get('user');
   const [userObject, setUserObject] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -46,8 +46,8 @@ const DiscoverDynamic = ({ object }) => {
 
     }
   }, [userCookie]);
-console.log("user Object:",userObject?.uid)
-console.log("tool Object:",toolObject?.TId)
+  console.log("user Object:", userObject?.uid)
+  console.log("tool Object:", toolObject?.TId)
 
   const [rating, setRating] = useState(0);
   const [tools, setTool] = useState(null)
@@ -151,7 +151,7 @@ console.log("tool Object:",toolObject?.TId)
     }
   };
 
- 
+
 
 
   const dateCorrector = (seconds) => {
@@ -195,38 +195,72 @@ console.log("tool Object:",toolObject?.TId)
     setIsDropdownOpen(!isDropdownOpen);
   };
 
-  const [review,setReview]=useState("")
-  const handleSubmitReview = async(event) => {
-    event.preventDefault();
+  const [review, setReview] = useState("")
+  const handleSubmitReview = async (event) => {
+    event.preventDefault()
     console.log(review)
     console.log(rating)
-    try{
-      if(userObject){
+    try {
+      if (userObject) {
 
-      const Tool = await addDoc(collection(db, 'reviews'), {
-        review:review,
-        rating:rating,
-        Tid:toolObject?.TId,
-        Uid:userObject?.uid,
-        imageUrl:toolObject?.imageUrl,
-        name:userObject?.displayName,
-        joiningDate: serverTimestamp(),
-      })
-      message.success("Review Added successfully")
-    }
-    else{
-      message.error("Sorry, Kindly Login first")
-    }
+        const Tool = await addDoc(collection(db, 'reviews'), {
+          review: review,
+          rating: rating,
+          Tid: toolObject?.TId,
+          Uid: userObject?.uid,
+          imageUrl: toolObject?.imageUrl,
+          name: userObject?.displayName,
+          joiningDate: serverTimestamp(),
+        })
+        message.success("Review Added successfully")
+
+        console.log("id>>||>>>", toolObject?.TId, "thisss");
+        try {
+          console.log("innnn")
+          const userRef = doc(db, "tools", toolObject?.TId);
+
+          const userDoc = await getDoc(userRef);
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+
+            // Assuming reviews and averageRating are fields in userData
+            const previousReviews = userData.reviews || 0;
+            const previousAverageRating = userData.rating || 0;
+
+            const newReviews = previousReviews + 1;
+            const newRating = rating// Calculate new rating (assuming you have it)
+
+            const newAverageRating = ((previousAverageRating * previousReviews) + newRating) / newReviews;
+
+            const updatedFields = {
+              reviews: newReviews,
+              rating: newAverageRating,
+            };
+
+            await updateDoc(userRef, updatedFields);
+            console.log("suscessc")
+          } else {
+            console.log("Document does not exist");
+          }
+        } catch (error) {
+          console.log("error updating:",error)
+          console.error("Error updating user:", error);
+        }
+
+      }
+      else {
+        message.error("Sorry, Kindly Login first")
+      }
 
 
 
-    }catch(err){
+    } catch (err) {
       message.error("Error,Review not Added")
-      console.log(err)
+      console.log("error",err)
 
     }
 
-   
+
     setIsDropdownOpen(false);
   };
 
@@ -317,7 +351,7 @@ console.log("tool Object:",toolObject?.TId)
               </button>
             </a>
             <div>
-              {loading ? <><Loader/></> : <> </>}
+              {loading ? <><Loader /></> : <> </>}
 
               <div
                 onClick={() => handleSaveTool()}
@@ -449,8 +483,8 @@ console.log("tool Object:",toolObject?.TId)
                 className=" dark:placeholder-[#FFFFFF]  focus:outline-none text-[13px] md:text-[16px] pl-3 md:pl-5 w-full py-3 md:py-5  bg-custom-blue border rounded-md dark:border-primary-border border-primary-dark"
                 placeholder="Write your review..."
                 value={review}
-                onChange={(e)=>setReview(e.target.value)}
-                
+                onChange={(e) => setReview(e.target.value)}
+
               />
               <div className="star-rating">
                 {[1, 2, 3, 4, 5].map((star) => (
@@ -464,9 +498,9 @@ console.log("tool Object:",toolObject?.TId)
                 ))}
               </div>
               <button
-               type="submit" 
-               onClick={handleSubmitReview}
-               className="font-[500] text-[18px] z-20  w-[180px] h-[50px] text-white dark:text-white rounded-md  bg-gradient-to-r from-blue-400 via-green-500 to-blue-500">
+                type="submit"
+                onClick={handleSubmitReview}
+                className="font-[500] text-[18px] z-20  w-[180px] h-[50px] text-white dark:text-white rounded-md  bg-gradient-to-r from-blue-400 via-green-500 to-blue-500">
                 Submit
               </button>
             </form>
