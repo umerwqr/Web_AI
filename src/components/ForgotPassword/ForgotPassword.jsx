@@ -5,7 +5,7 @@ import { message } from 'antd';
 import cookie from "js-cookie"
 import { auth } from '@/config/firebase/';
 import AppContext from '../appContext';
-import {db} from "@/config/firebase"
+import { db } from "@/config/firebase"
 import { sendPasswordResetEmail } from 'firebase/auth';
 
 const Login = () => {
@@ -14,31 +14,35 @@ const Login = () => {
     const [newUser, setNewUser] = useState({ email: '', password: '' });
 
 
-   
+
     const validateEmail = (email) => {
         // Regular expression to validate email format
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
     }
-    const handleSubmit=async(e)=>{
-        e.preventDefault()  
-        console.log(newUser.email)
-        try{
+    const handleSubmit = async (e) => {
+        e.preventDefault()
 
-        
-        await sendPasswordResetEmail(auth,newUser.email)
+        console.log(newUser.email)
+        try {
+
+
+            await sendPasswordResetEmail(auth, newUser.email)
             message.success("Check your Gmail")
-            router.push("/login")
+
+            // setTimeout(() => {
+            //     router.push("/login");
+            // }, 3000); // 3000 milliseconds = 3 seconds
         }
-        catch(err){
+        catch (err) {
             message.error("Error")
             console.log(err)
         }
 
     }
 
-   
-  
+
+
 
     return (
         <div>
@@ -59,19 +63,35 @@ const Login = () => {
                         className='dark:placeholder-[#FFFFFF]  focus:outline-none text-[13px] md:text-[16px] pl-3 
                         md:pl-5 w-full py-3 md:py-5  bg-custom-blue border rounded-md dark:border-primary-border
                          border-primary-dark' />
-                  
+
+
                     <div className='my-0'>
+<p className='py-2'>After Submitting Email, check your gmail account and reset password</p> 
+
                         <Link href={'#'}>
                             <button
-                            onClick={handleSubmit}
+                                onClick={handleSubmit}
                                 className='font-[500] md:text-[18px] w-[130px] h-[40px] md:h-[50px] text-white dark:text-white 
                             rounded-md  bg-gradient-to-r from-blue-400 via-green-500 to-blue-500'>
-                                Submit 
+                                Submit
                             </button>
 
                         </Link>
                     </div>
-               
+
+                    <div className='my-0'>
+                       <p className='py-2'>if Password reset successfully, you can login now with new password</p> 
+                        <Link href={'/login'}>
+                            <button
+                               
+                                className='font-[500] md:text-[18px] w-[130px] h-[40px] md:h-[50px] text-white dark:text-white 
+                            rounded-md  bg-gradient-to-r from-blue-400 via-green-500 to-blue-500'>
+                                Login
+                            </button>
+
+                        </Link>
+                    </div>
+
                 </div>
             </div>
         </div>
