@@ -66,7 +66,7 @@ const Login = () => {
 
 
                     <div className='my-0'>
-<p className='py-2'>After Submitting Email, check your gmail account and reset password</p> 
+                       <p className='py-2'>After Submitting Email, check your gmail account and reset password</p> 
 
                         <Link href={'#'}>
                             <button

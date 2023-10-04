@@ -210,11 +210,11 @@ const LatestNews = () => {
                 <div>
                     <News Category={selected.name} SortBy={selected2.name}/>
                 </div>
-                <div className='mb-20'>
+                {/* <div className='mb-20'>
                     <button className="font-[500] text-[18px] w-[153px] h-[50px] z-20   dark:text-white border border-[#15CADF] bg-transparent rounded-md">
                         View All
                     </button>
-                </div>
+                </div> */}
 
 
             </div>

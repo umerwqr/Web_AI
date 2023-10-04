@@ -14,8 +14,10 @@ const Review = () => {
       setToolObject(JSON.parse(toolCookie))
     }
   }, [toolCookie]);
+
   const [reviewArray, setReviewArray] = useState([]); // Use state to store savesArray
   console.log("Id is :", toolObject?.TId)
+ 
   useEffect(() => {
     const getToolSaves = async () => {
       try {
