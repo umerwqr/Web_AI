@@ -81,6 +81,7 @@ const DiscoverDynamic = ({ object }) => {
   var saves = [];
   const [SaveLength, setSaveLength] = useState(0)
   console.log(saves)
+  
   useEffect(() => {
     const handleCheck = async () => {
       try {
@@ -108,15 +109,15 @@ const DiscoverDynamic = ({ object }) => {
     const getToolSaves = async () => {
       try {
         const querySnapshot = await getDocs(query(collection(db, 'save'), where('toolId', '==', object[0].TId)));
+        
         setSaveLength(querySnapshot.size);
       } catch (error) {
         console.error("Error fetching tool saves:", error);
       }
     }
-
     getToolSaves();
 
-  }, [selected, check2]);
+  }, [ check2]);
 
   const handleSaveTool = async () => {
     setLoading(true)
@@ -130,6 +131,7 @@ const DiscoverDynamic = ({ object }) => {
         console.log('Document deleted successfully');
         setLoading(false)
         setSelected(prevSelected => !prevSelected);
+        setCheck2(!check2)
 
       } else {
         // Document doesn't exist, add it
@@ -140,6 +142,8 @@ const DiscoverDynamic = ({ object }) => {
         console.log('Document added successfully');
         setLoading(false)
         setSelected(prevSelected => !prevSelected);
+        setCheck2(!check2)
+
 
       }
 

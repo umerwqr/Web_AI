@@ -12,8 +12,10 @@ import { getStorage } from "firebase/storage";
 import { serverTimestamp } from 'firebase/firestore'; // Added this import
 import { Select } from 'antd';
 import { Menu, Dropdown, Button } from 'antd';
+import { useRouter } from 'next/router';
 import { DownOutlined } from '@ant-design/icons';
 import Loader from '../Loader';
+import { Router } from 'next/router';
 const { Option, OptGroup } = Select;
 
 
@@ -106,7 +108,7 @@ const Submit = () => {
   const [loading, setLoading] = useState(false);
   const [userObject, setUserObject] = useState(null)
   var userCookie = cookie.get('user');
-
+  const router =useRouter()
 
   useEffect(() => {
     if (userCookie) {
@@ -209,7 +211,7 @@ const Submit = () => {
 
       message.success('Tool successfully Registered');
       setLoading(false)
-
+      router.push("/")
 
     }
     catch (err) {
@@ -409,3 +411,7 @@ const Submit = () => {
 }
 
 export default Submit
+
+
+
+

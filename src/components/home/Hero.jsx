@@ -11,6 +11,7 @@ const Hero = ({ onSearch, CategoryFilter }) => {
     const [selected, setSelected] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [category, setCategory] = useState('');
+    const router=useRouter()
 
     const handleSearchChange = (e) => {
         setSearchTerm(e.target.value);
@@ -57,14 +58,16 @@ const Hero = ({ onSearch, CategoryFilter }) => {
                         </div>
                         <div className='mt-10 flex flex-col justify-center items-center'>
                             <div className='flex gap-3 md:gap-14 justify-center items-center'>
-                                <Link href={''} className='flex items-center gap-3'>
+                                <Link href={'/todayTools'} className='flex items-center gap-3'>
                                     <RiToolsFill size={22} className="dark:text-white text-black" />
-                                    <p className='text-sm md:text-base'>
+                                    <p 
+                                    
+                                    className='text-sm md:text-base'>
                                         Tools added today
                                     </p>
                                 </Link>
-                                <p className='h-[23px] w-[23px] rounded-full border-2 absolute md:top-[125px] top-[250px] mr-10 border-white flex items-center justify-center text-xs bg-primary-blue'>5</p>
-                                <Link href={'/latest-news'} className='flex items-center gap-3'>
+                                {/* <p className='h-[23px] w-[23px] rounded-full border-2 absolute md:top-[125px] top-[250px] mr-10 border-white flex items-center justify-center text-xs bg-primary-blue'>5</p> */}
+                                <Link href={'/newsToday'} className='flex items-center gap-3'>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="18" viewBox="0 0 20 18" fill="none">
                                         <path d="M5 14C5.28334 14 5.521 13.904 5.713 13.712C5.905 13.52 6.00067 13.2827 6 13C6 12.7167 5.904 12.479 5.712 12.287C5.52 12.095 5.28267 11.9993 5 12C4.71667 12 4.479 12.096 4.287 12.288C4.095 12.48 3.99934 12.7173 4 13C4 13.2833 4.096 13.521 4.288 13.713C4.48 13.905 4.71734 14.0007 5 14ZM4 10H6V4H4V10ZM9 14H16V12H9V14ZM9 10H16V8H9V10ZM9 6H16V4H9V6ZM2 18C1.45 18 0.979002 17.804 0.587002 17.412C0.195002 17.02 -0.000664969 16.5493 1.69779e-06 16V2C1.69779e-06 1.45 0.196002 0.979002 0.588002 0.587002C0.980002 0.195002 1.45067 -0.000664969 2 1.69779e-06H18C18.55 1.69779e-06 19.021 0.196002 19.413 0.588002C19.805 0.980002 20.0007 1.45067 20 2V16C20 16.55 19.804 17.021 19.412 17.413C19.02 17.805 18.5493 18.0007 18 18H2Z" fill="#2CD880" />
                                     </svg>
@@ -72,7 +75,7 @@ const Hero = ({ onSearch, CategoryFilter }) => {
                                         News added today
                                     </p>
                                 </Link>
-                                <p className='h-[23px] w-[23px] rounded-full border-2 absolute md:top-[125px] top-[250px] ml-72 md:ml-96 border-white flex items-center justify-center text-xs bg-primary-blue'>7</p>
+                                {/* <p className='h-[23px] w-[23px] rounded-full border-2 absolute md:top-[125px] top-[250px] ml-72 md:ml-96 border-white flex items-center justify-center text-xs bg-primary-blue'>7</p> */}
 
 
                             </div>
@@ -138,7 +141,7 @@ const Hero = ({ onSearch, CategoryFilter }) => {
                                                         Business
                                                     </button>
                                                     <button onClick={() => { toggleDropdown(); handleCategoryFilter("Others") }} className="dark:text-white text-[14px] font-[500] hover:dark:text-[#2CD880] hover:text-[#2CD880] transition-all duration-200 ease-in">
-                                                        Business
+                                                        Others
                                                     </button>
                                                 </div>
                                             </div>
