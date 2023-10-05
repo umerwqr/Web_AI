@@ -1,8 +1,7 @@
 import Image from "next/image";
-import Link from "next/link";
 import React, { useState, useEffect } from "react";
 import PaymentModal from "./PaymentModal";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/router";
 import { BsCheckCircle } from "react-icons/bs";
 import cookie from "js-cookie"
 import { db } from "@/config/firebase";
@@ -234,27 +233,11 @@ const SubmitTool = () => {
           <div className="absolute md:block hidden top-[60rem] left-0 bg-[#2CD7834F]/10 w-[338px] h-[338px] rounded-full blur-3xl"></div>
           <PaymentModal isOpen={isModalOpen} onClose={handleModalClose} />
         </div> :
-                                    <>                                {router.push('/login')}
-                                    </>    
+            <div>       
+              {()=>router.push('/login')} 
+            </div>
+                                     
 
-        //  <div className="flex flex-col my-11 justify-center items-center">
-        //   <p className='text-[18px] font-[500] text-black dark:text-[#FFF] md:px-[15rem] pt-5'>
-        //     you are not Logged in. Kindly Login in first.
-        //   </p>
-
-        //   <div className='my-4' style={{ marginBottom: "30px" }}>
-        //     <Link href={'/login'}>
-        //       <button
-        //         className='font-[500] md:text-[18px] w-[130px] h-[40px] md:h-[50px] text-white dark:text-white 
-        //                                            rounded-md  bg-gradient-to-r from-blue-400 via-green-500 to-blue-500'>
-        //         Login
-        //       </button>
-
-        //     </Link>
-        //   </div>
-
-
-        // </div>
 
     }
 
