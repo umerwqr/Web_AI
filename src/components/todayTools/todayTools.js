@@ -93,50 +93,7 @@ const TodayTools = () => {
     }, [tools]);
 
     console.log("filtered tools:", tools);
-    const data = [
-        {
-            id: 1,
-            img: '/images/cardf1.png',
-            title: 'Writesonic',
-            desc: '"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
-        },
-        {
-            id: 1,
-            img: '/images/cardf2.png',
-            title: 'Writesonic',
-            desc: '"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-
-        },
-        {
-            id: 1,
-            img: '/images/cardf3.png',
-            title: 'Writesonic',
-            desc: '"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-
-        },
-        {
-            id: 1,
-            img: '/images/cardf4.png',
-            title: 'Writesonic',
-            desc: '"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-
-        },
-        {
-            id: 1,
-            img: '/images/cardf5.png',
-            title: 'Writesonic',
-            desc: '"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-
-        },
-        {
-            id: 1,
-            img: '/images/cardf6.png',
-            title: 'Writesonic',
-            desc: '"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-
-        },
-
-    ]
+   
     return (
 
         <>
@@ -154,7 +111,7 @@ const TodayTools = () => {
                             </h1>
                             {userObject ? <>
                                 <p className='text-[18px] font-[500] text-black dark:text-[#FFF] md:px-[15rem] pt-5'>
-                                    These are the tools and posts you have favourited. You can remove them from your favourites by clicking the bookmark icon.
+                                    The number of tools and posts are added <span className='font-bold text-xl'>Today</span> is : {tools && tools.length} 
                                 </p>
                                 <div className='mb-20'>
                                     <div className='absolute left-0 bg-[#2CD7834F]/10 w-[338px] h-[338px] rounded-full blur-3xl'>
@@ -165,7 +122,7 @@ const TodayTools = () => {
                                         {tools && tools.map((item, index) => (
                                             <div onClick={() => router.push("/discover-dynamic")} key={index} className='cursor-pointer w-[330px] md:w-[350px] bg-gradient-to-br from-[#27B6D7] via-[#07174F54] to-[#27B6D7] bg-opacity-50 rounded-md mx-auto p-[1px]  '>
                                                 <div className='w-full p-1 backdrop-blur-2xl bg-white dark:bg-primary-dark/90 h-full rounded-md'>
-                                                    <Image src={item.imageUrl} width={347} height={263} alt='' className='w-[300px] h-[220px] md:w-[320px] md:h-[220px] rounded-[10px] mx-auto  my-3 object-cover' />
+                                                    <Image src={item.imageUrl} width={347} height={263} alt='' className='w-[300px] transition duration-250 hover:scale-[102%] h-[220px] md:w-[320px] md:h-[220px] rounded-[10px] mx-auto  my-3 object-cover' />
                                                     <div className='px-5 flex items-center gap-3'>
                                                         <p className='text-[24px] font-[700]'>{item.title}</p>
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">

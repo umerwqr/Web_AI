@@ -73,8 +73,8 @@ const Navbar = () => {
                 <button onClick={() => router.push("/favorites")} className=" z-20 ">
                   Favorites
                 </button>
-                <button onClick={() => router.push("/discover")} className="  z-20">
-                  Categories
+                <button onClick={() => router.push("/Category")} className="  z-20">
+                  Discover
                 </button>
                 <button onClick={() => router.push("/submit-tool")} className="  z-20">
                   Submit

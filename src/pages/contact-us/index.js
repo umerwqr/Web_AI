@@ -2,11 +2,9 @@
 import Wrapper from '@/components/shared/Wrapper'
 import Layout from '@/components/shared/Layout'
 import React from 'react'
-import Favorites from '@/components/favorites/Favorites';
-import TodayTools from '@/components/todayTools/todayTools';
-import EachCata from "@/components/eachCata/eachCata"
-import { Manrope } from "next/font/google";
+import Contact from '@/components/contact-us/contact-us';
 import Link from 'next/link';
+import { Manrope } from "next/font/google";
 
 const font = Manrope({ subsets: ["latin"] });
 const index = () => {
@@ -16,12 +14,12 @@ const index = () => {
                 <div className=''>
                     <Layout>
                         <div className='border dark:border-primary-blue/20 py-2 px-8 rounded-md mt-10'>
-                            <p className='text-[18px] font-[500]  dark:text-primary-blue/20'><Link href="/discover" className='hover:underline'>Categories</Link> <span className='dark:text-white text-black'> {'>'} Subcategory </span>
+                            <p className='text-[18px] font-[500]  dark:text-primary-blue/20'><Link href="/">Home</Link><span className='dark:text-white text-black'> {'>'} Contact Us </span>
                             </p>
                         </div>
                     </Layout>
                     <div>
-                        <EachCata />
+                        <Contact/>
                     </div>
                 </div>
             </Wrapper>

@@ -49,9 +49,14 @@ const Login = () => {
         e.preventDefault(); // Prevents the default form submission behavior
         try {
 
-            if (!checkEmail || checkName) {
-                message.error("Login Failed Due to wrong email or name format")
+            if(newUser.email =="" || newUser.password ==""){
+                message.error("Fields are empty")
             }
+            else if (!checkEmail || checkName) {
+                message.error("Login Failed Due to wrong email or name format")
+                return
+            }
+
             else {
                 const userCredential = await signInWithEmailAndPassword(auth, newUser.email, newUser.password);
                 const user = userCredential.user;
@@ -66,7 +71,13 @@ const Login = () => {
                 }, 2000);
             }
         } catch (error) {
-            message.error("Error Logging in ")
+            if (error.code === 'auth/email-already-in-use') {
+                // The email is already in use, display an error message to the user.
+                message.error("Email is already in use. Please choose a different email.");
+            } else {
+                // Handle other registration errors
+                message.error("Wrong Credientials .");
+            }
         }
     };
 
@@ -108,7 +119,7 @@ const Login = () => {
                                 />
                                 <span
                                     onClick={togglePasswordVisibility}
-                                    className="absolute right-4 top-[17px] cursor-pointer"
+                                    className="absolute right-4 top-[22px] cursor-pointer"
                                 >
                                     {showPassword ? <EyeInvisibleOutlined /> : <EyeOutlined />}
                                 </span>
@@ -133,7 +144,7 @@ const Login = () => {
                             </div>
 
                             <div className='my-1' style={{ marginBottom: "40px" }}>
-                                <p className="mb-6 text-red-600">If not Registered?</p>
+                                <p className="mb-6 ">If not Registered?</p>
 
                                 <Link href={'/Register'}>
                                     <button

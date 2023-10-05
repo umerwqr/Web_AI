@@ -148,7 +148,7 @@ const News = ({ Category, SortBy }) => {
 
                                     </div>
                                    
-                                    <p className='text-[24px] font-[600] text-left'>{truncateText(item.discription, 13)}</p>
+                                    <p className='text-[24px] font-[600] h-[90px] text-left'>{truncateText(item.discription, 13)}</p>
                                     <Link href={`${item.toolLink}`}>
                                  
                                     <button

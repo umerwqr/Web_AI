@@ -88,7 +88,7 @@ const LatestNews = () => {
                     Latest AI News
                 </h1>
                 <p className='text-[18px] font-[500] text-black dark:text-[#FFF] md:px-[15rem] pt-5'>
-                    These are the tools and posts you have favourited. You can remove them from your favourites by clicking the bookmark icon.
+                    These are the Latest News about AI Tools. There are also old news about AI Tools.
                 </p>
 
                 <div className='flex items-center justify-center gap-6 md:gap-8 mt-12'>

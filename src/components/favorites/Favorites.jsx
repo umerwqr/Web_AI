@@ -128,6 +128,9 @@ const Favorites = () => {
         },
 
     ]
+    const handleTransform=()=>{
+        router.push("/login")
+    }
     return (
 
         <>
@@ -154,7 +157,9 @@ const Favorites = () => {
                                     </div>
                                     <div className='grid grid-cols-1 md:grid-cols-3 gap-8 mt-10'>
                                         {tools && tools.map((item, index) => (
-                                            <div onClick={() => router.push("/discover-dynamic")} key={index} className='cursor-pointer w-[330px] md:w-[350px] bg-gradient-to-br from-[#27B6D7] via-[#07174F54] to-[#27B6D7] bg-opacity-50 rounded-md mx-auto p-[1px]  '>
+                                            <div 
+                                            onClick={() => { cookie.set("tool", JSON.stringify(item && item)); router.push({ pathname: `discover-dynamic`, query: { subject: JSON.stringify(item && item) } }) }}
+                                             key={index} className='cursor-pointer w-[330px] md:w-[350px] bg-gradient-to-br from-[#27B6D7] via-[#07174F54] to-[#27B6D7] bg-opacity-50 rounded-md mx-auto p-[1px]  '>
                                                 <div className='w-full p-1 backdrop-blur-2xl bg-white dark:bg-primary-dark/90 h-full rounded-md'>
                                                     <Image src={item.imageUrl} width={347} height={263} alt='' className='w-[300px] h-[220px] md:w-[320px] md:h-[220px] rounded-[10px] mx-auto  my-3 object-cover' />
                                                     <div className='px-5 flex items-center gap-3'>
@@ -217,7 +222,8 @@ const Favorites = () => {
 
                                 </div> </> :
                                 <>
-                                    <p className='text-[18px] font-[500] text-black dark:text-[#FFF] md:px-[15rem] pt-5'>
+                                {router.push('/login')}
+                                    {/* <p className='text-[18px] font-[500] text-black dark:text-[#FFF] md:px-[15rem] pt-5'>
                                         you are not Logged in. Kindly Login in first.
                                     </p>
 
@@ -230,7 +236,7 @@ const Favorites = () => {
                                             </button>
 
                                         </Link>
-                                    </div>
+                                    </div> */}
 
 
                                 </>}

@@ -153,7 +153,7 @@ const TopAiTools = ({ searchTerm, Category }) => {
                                                     width={1080}
                                                     height={1080}
                                                     alt=""
-                                                    className="w-[300px] h-[220px] md:w-[320px] md:h-[220px] rounded-[10px] mx-auto  my-3 object-cover"
+                                                    className="w-[300px] transition duration-250 hover:scale-[102%] h-[220px] md:w-[320px] md:h-[220px] rounded-[10px] mx-auto  my-3 object-cover"
                                                 />
                                                 <div className="px-5 flex items-center gap-3">
                                                     <p className="text-[24px] font-[700]">{item.title}</p>
@@ -227,7 +227,7 @@ const TopAiTools = ({ searchTerm, Category }) => {
                             </div>
                             <div className="absolute r bg-white/10 w-[338px] h-[338px] rounded-full blur-3xl"></div>
                             <div className="mt-10">
-                                <button className="flex items-center gap-3 justify-center w-[217px] h-[50px] border dark:text-white text-primary-blue  border-primary-blue  rounded-md">
+                                {/* <button className="flex items-center gap-3 justify-center w-[217px] h-[50px] border dark:text-white text-primary-blue  border-primary-blue  rounded-md">
                                     Visit Website
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
@@ -241,7 +241,7 @@ const TopAiTools = ({ searchTerm, Category }) => {
                                             fill="white"
                                         />
                                     </svg>
-                                </button>
+                                </button> */}
                             </div>
                         </div>
                     </Wrapper>

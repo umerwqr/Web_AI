@@ -6,7 +6,7 @@ import { auth } from '@/config/firebase/';
 import { message } from "antd"
 import { serverTimestamp } from 'firebase/firestore'; // Added this import
 import { collection, addDoc } from 'firebase/firestore';
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, getDocs, query, where } from "firebase/firestore";
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import Loader from '../Loader';
 import { EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
@@ -16,6 +16,7 @@ const Register = () => {
     const [newUser, setNewUser] = useState({ email: '', password: '', username: '' });
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(true)
+    const [loading2, setLoading2] = useState(false)
     const validateEmail = (email) => {
         // Regular expression to validate email format
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -39,15 +40,34 @@ const Register = () => {
 
 
 
-    const registerUser = async (e) => {
-        const checkEmail = validateEmail(newUser.email)
-        const checkName = containsEmail(newUser.username)
-
+    const registerUser = async () => {
+        setLoading2(true)
         try {
+            if (newUser.email === "" || newUser.password === "" || newUser.username === "") {
+                setLoading2(false)
+
+                message.error("Fields are empty");
+                return;
+            }
+
+            const checkEmail = validateEmail(newUser.email);
+            const checkName = containsEmail(newUser.username);
 
             if (!checkEmail || checkName) {
-                message.error("Registration Failed Due to wrong email or name format")
+                message.error("Registration Failed Due to wrong email or name format");
+                setLoading2(false)
 
+                return;
+            }
+
+            const emailQuery = query(collection(db, 'users'), where('email', '==', newUser.email));
+            const querySnapshot = await getDocs(emailQuery);
+
+            if (!querySnapshot.empty) {
+                message.error("Email already exists");
+                setLoading2(false)
+
+                return;
             }
             else {
                 const userCredential = await createUserWithEmailAndPassword(auth, newUser.email, newUser.password);
@@ -71,10 +91,12 @@ const Register = () => {
                 setTimeout(() => {
                     router.push('/login');
                 }, 2000);
+                setLoading2(false)
 
             }
         } catch (error) {
             message.error("Error, Email: should be unique & correct format & password: length should be more than 6")
+            setLoading2(false)
         }
     };
 
@@ -98,7 +120,7 @@ const Register = () => {
                         <p className="text-[18px] font-[500] text-black dark:text-[#FFF] md:px-[15rem] pt-5">
                             Please Register a new account to proceed further                </p>
                         <div className='flex flex-col gap-16 px-3 pb-10 md:pb-0 pt-32 md:pt-40 md:px-10  my-20 w-full md:w-[80%] bg-custom-blue  border border-primary-border rounded-md'>
-
+{loading2 && <Loader/>}
                             <input placeholder='Enter Username'
                                 type="text"
                                 value={newUser.username}
@@ -124,7 +146,7 @@ const Register = () => {
                                        border-primary-dark"  />
                                 <span
                                     onClick={togglePasswordVisibility}
-                                    className="absolute right-4 top-[17px] cursor-pointer"
+                                    className="absolute right-4 top-[22px] cursor-pointer"
                                 >
                                     {showPassword ? <EyeInvisibleOutlined /> : <EyeOutlined />}
                                 </span>
@@ -141,7 +163,7 @@ const Register = () => {
                                 </Link>
                             </div>
                             <div className='my-0' style={{ marginBottom: "30px" }}>
-                                <p className="mb-6 text-red-600">If already Registered?</p>
+                                <p className="mb-6 ">If already Registered?</p>
                                 <Link href={'/login'}>
                                     <button
                                         className='font-[500] md:text-[18px] w-[130px] h-[40px] md:h-[50px] text-white dark:text-white 

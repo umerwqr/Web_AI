@@ -1,9 +1,49 @@
-import React from "react";
+import React, { useState } from "react";
 import Wrapper from "../shared/Wrapper";
 import Link from "next/link";
 import Image from "next/image";
-
+import { addDoc, collection,where,query,getDocs } from "firebase/firestore";
+import { db } from "@/config/firebase";
+import { message } from "antd";
 const Footer = () => {
+
+    const [formData, setFormData] = useState({ email: "" })
+    const handleSubscribe = async () => {
+        try {
+            // Check if email is empty
+            if (!formData.email) {
+                message.error("Email cannot be empty");
+                return;
+            }
+
+            // Regular expression to validate email format
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(formData.email)) {
+                message.error("Invalid email format");
+                return;
+            }
+
+            // Check if email already exists in the database
+            const emailQuery = query(collection(db, 'subscribe'), where('email', '==', formData.email));
+            const querySnapshot = await getDocs(emailQuery);
+
+            if (!querySnapshot.empty) {
+                message.error("Email already subscribed");
+                return;
+            }
+
+            // If all checks pass, add the email to the database
+            const Tool = await addDoc(collection(db, 'subscribe'), {
+                email: formData.email,
+            });
+
+            message.success("Subscribed");
+        } catch (err) {
+            message.error("Failed to subscribe");
+            console.log(err)
+        }
+    }
+
     return (
         <div className=" dark:bg-gradient-to-r from-[#112B59] to-[#07174F]">
             <Wrapper>
@@ -57,6 +97,10 @@ const Footer = () => {
 
                                     <li>Latest News</li>
                                 </Link>
+                                <Link href={'/contact-us'}>
+
+                                    <li>Contact Us</li>
+                                </Link>
                             </ul>
                         </div>
                         <div className="md:w-[180px] ">
@@ -89,7 +133,9 @@ const Footer = () => {
                                 <div className="bg-gradient-to-br from-[#27B6D7] via-[#07174F54] to-[#27B6D7] bg-opacity-50 rounded-md mx-auto p-[1px]">
                                     <div className="relative rounded-md flex-grow w-full md:w-[300px] bg-white dark:bg-gradient-to-r from-[#112B59] to-[#07174F]">
                                         <input
+                                            value={formData.email}
                                             type="text"
+                                            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                             placeholder="Email Address"
                                             className="md:w-full w-full focus:outline-none px-5 pr-10 h-[50px] bg-transparent rounded-md"
                                         />
@@ -101,6 +147,7 @@ const Footer = () => {
                             </div>
                             <button
                                 type="button"
+                                onClick={handleSubscribe}
                                 className=" w-[100%] h-10 my-2 transform translate-y-[-50%] right-3 bg-primary-blue text-white h-[30px] px-2 md:px-4 py-1 rounded-md"
                             >
                                 Subscribe

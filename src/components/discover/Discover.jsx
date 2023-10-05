@@ -165,9 +165,9 @@ const Discover = () => {
                         {subCategoryWithCounts[cat].map(subCat => (
                             <li 
                             onClick={()=>handleSubCategories(cat,subCat.name)}
-                            key={subCat.name} className="mb-2 cursor-pointer hover:bg-gray-100 trasition duration-150 rounded-md px-4">
-                                <h2 className="text-xl font-semibold my-2">
-                                    {subCat.name} ({subCat.count})
+                            key={subCat.name} className="mb-0 cursor-pointer hover:bg-gray-500 hover:text-white  trasition duration-250 rounded-md px-4">
+                                <h2 className="text-xl font-semibold mt-2">
+                                    {subCat.name} <span>    </span> ({subCat.count} <span className="text-sm">tools</span>) 
                                 </h2>
 
                                 {/* <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-y-6 gap-x-4">
